@@ -1,15 +1,24 @@
+import configureOpenAPI from "@/lib/configure-open-api";
 import createApp from "@/lib/create-app";
+import index from "@/routes/index.routes";
 
 const app = createApp();
 
-app.get("/", (c) => {
-  return c.text("Hello Open API Hono!");
-});
+const routes = [
+  index,
+];
 
-app.get("/error", (c) => {
-  c.var.logger.info("Test logger output in pino logs");
-  c.var.logger.debug("Only visible when debug level enabled!");
-  throw new Error("Test Error route");
-});
+configureOpenAPI(app);
+routes.forEach(route => app.route("/", route));
+
+// app.get("/", (c) => {
+//   return c.text("Hello Open API Hono!");
+// });
+
+// app.get("/error", (c) => {
+//   c.var.logger.info("Test logger output in pino logs");
+//   c.var.logger.debug("Only visible when debug level enabled!");
+//   throw new Error("Test Error route");
+// });
 
 export default app;
