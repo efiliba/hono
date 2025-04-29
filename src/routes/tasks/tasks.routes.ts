@@ -1,7 +1,8 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
 import { insertTasksSchema, selectTasksSchema } from "@/db/schema";
-import { HttpStatusCodes, createErrorSchema } from "helpers";
+import { notFoundSchema } from "@/lib/constants";
+import { createErrorSchema, HttpStatusCodes } from "helpers";
 
 const tags = ["Tasks"];
 
@@ -17,6 +18,53 @@ export const list = createRoute({
         },
       },
       description: "The list of tasks",
+    },
+  },
+});
+
+const idParamsSchema = z.object({
+  id: z.coerce.number().openapi({
+    param: {
+      name: "id",
+      in: "path",
+      required: true,
+    },
+    required: ["id"],
+    example: 42,
+  }),
+});
+
+export const getOne = createRoute({
+  path: "/tasks/{id}",
+  method: "get",
+  request: {
+    params: idParamsSchema,
+  },
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: { // 200
+      content: {
+        "application/json": {
+          schema: selectTasksSchema,
+        },
+      },
+      description: "The requested task",
+    },
+    [HttpStatusCodes.NOT_FOUND]: { // 404
+      content: {
+        "application/json": {
+          schema: notFoundSchema,
+        },
+      },
+      description: "Task not found",
+    },
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: { // 422
+      content: {
+        "application/json": {
+          schema: createErrorSchema(idParamsSchema),
+        },
+      },
+      description: "Invalid id",
     },
   },
 });
@@ -53,10 +101,11 @@ export const create = createRoute({
       },
       description: "The validation error",
     },
-
   },
 });
 
 export type ListRoute = typeof list;
+
+export type GetOneRoute = typeof getOne;
 
 export type CreateRoute = typeof create;
