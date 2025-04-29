@@ -12,6 +12,7 @@ const onError: ErrorHandler = (err, c) => {
     : INTERNAL_SERVER_ERROR;
 
   const env = c.env?.NODE_ENV || process.env?.NODE_ENV;
+
   return c.json(
     {
       message: err.message,

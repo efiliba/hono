@@ -18,11 +18,8 @@ export default function configureOpenAPI(app: AppOpenAPI) {
     layout: "classic",
     defaultHttpClient: {
       targetKey: "js",
-      clientKey: "fetch"
+      clientKey: "fetch",
     },
-    spec: {
-      url: "/doc",
-    },
+    url: "/doc",
   }));
 }
-  
