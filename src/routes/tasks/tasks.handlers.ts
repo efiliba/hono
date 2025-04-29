@@ -1,10 +1,12 @@
+import { eq } from "drizzle-orm";
+
 import type { AppRouteHandler } from "@/lib/types";
 
 import db from "@/db";
 import { tasks } from "@/db/schema";
 import { HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
-import type { CreateRoute, GetOneRoute, ListRoute } from "./tasks.routes";
+import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute } from "./tasks.routes";
 
 export const list: AppRouteHandler<ListRoute> = async context =>
   context.json(await db.query.tasks.findMany());
@@ -26,4 +28,20 @@ export const create: AppRouteHandler<CreateRoute> = async (context) => {
   const task = context.req.valid("json");
   const [inserted] = await db.insert(tasks).values(task).returning();
   return context.json(inserted, HttpStatusCodes.OK);
+};
+
+export const patch: AppRouteHandler<PatchRoute> = async (context) => {
+  const { id } = context.req.valid("param");
+  const updates = context.req.valid("json");
+
+  const [task] = await db.update(tasks)
+    .set(updates)
+    .where(eq(tasks.id, id))
+    .returning();
+
+  if (!task) {
+    return context.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return context.json(task, HttpStatusCodes.OK);
 };

@@ -1,6 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
-import { insertTasksSchema, selectTasksSchema } from "@/db/schema";
+import { insertTasksSchema, patchTasksSchema, selectTasksSchema } from "@/db/schema";
 import { notFoundSchema } from "@/lib/constants";
 import { createErrorSchema, HttpStatusCodes } from "helpers";
 
@@ -104,8 +104,52 @@ export const create = createRoute({
   },
 });
 
+export const patch = createRoute({
+  path: "/tasks/{id}",
+  method: "patch",
+  request: {
+    params: idParamsSchema,
+    body: {
+      content: {
+        "application/json": {
+          schema: patchTasksSchema,
+        },
+      },
+      description: "The task to update",
+      required: true,
+    },
+  },
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: { // 200
+      content: {
+        "application/json": {
+          schema: selectTasksSchema,
+        },
+      },
+      description: "The updated task",
+    },
+    [HttpStatusCodes.NOT_FOUND]: { // 404
+      content: {
+        "application/json": {
+          schema: notFoundSchema,
+        },
+      },
+      description: "Task not found",
+    },
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: { // 422
+      content: {
+        "application/json": {
+          schema: createErrorSchema(patchTasksSchema)
+            .or(createErrorSchema(idParamsSchema)),
+        },
+      },
+      description: "The validation error",
+    },
+  },
+});
+
 export type ListRoute = typeof list;
-
 export type GetOneRoute = typeof getOne;
-
 export type CreateRoute = typeof create;
+export type PatchRoute = typeof patch;
