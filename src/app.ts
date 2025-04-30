@@ -5,13 +5,20 @@ import tasks from "@/routes/tasks/tasks.index";
 
 const app = createApp();
 
+// const _app = app
+//   .route("/", index)
+//   .route("/", tasks);
+
+// export type AppType = typeof _app;
+
 const routes = [
   index,
   tasks,
-];
+] as const;
+
+routes.forEach(route => app.route("/", route));
 
 configureOpenAPI(app);
-routes.forEach(route => app.route("/", route));
 
 // app.get("/", (c) => {
 //   return c.text("Hello Open API Hono!");
@@ -22,5 +29,7 @@ routes.forEach(route => app.route("/", route));
 //   c.var.logger.debug("Only visible when debug level enabled!");
 //   throw new Error("Test Error route");
 // });
+
+export type AppType = typeof routes[number];
 
 export default app;

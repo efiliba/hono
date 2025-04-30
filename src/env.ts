@@ -7,7 +7,11 @@ import { z } from "zod";
 expand(config({
   path: path.resolve(
     process.cwd(),
-    process.env.NODE_ENV === "test" ? ".env" : ".env.production",
+    process.env.NODE_ENV === "test"
+      ? ".env.test"
+      : process.env.NODE_ENV === "dev"
+        ? ".env"
+        : ".env.production",
   ),
 }));
 

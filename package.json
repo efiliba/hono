@@ -10,7 +10,7 @@
     "push": "drizzle-kit push",
     "studio": "drizzle-kit studio",
     "lint": "eslint .",
-    "test": "vitest"
+    "test": "LOG_LEVEL=silent vitest"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",

@@ -7,7 +7,7 @@ import { ZodIssueCode } from "zod";
 
 import env from "@/env";
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/lib/constants";
-import { createTestApp } from "@/lib/create-app";
+import createApp, { createTestApp } from "@/lib/create-app";
 import { HttpStatusPhrases } from "helpers";
 
 import router from "./tasks.index";
@@ -17,6 +17,13 @@ if (env.NODE_ENV !== "test") {
 }
 
 const client = testClient(createTestApp(router));
+
+const testClientTypeApp = createApp();
+//    ^?
+const testClientTypeRouter = testClientTypeApp.route("/", router);
+//    ^?
+const testClientType = testClient(testClientTypeRouter);
+//    ^?
 
 describe("tasks routes", () => {
   beforeAll(async () => {
@@ -42,7 +49,7 @@ describe("tasks routes", () => {
     expect(error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.REQUIRED);
   });
 
-  const id = 46;
+  const id = 1;
   const name = "Learn vitest";
 
   it("post /tasks creates a task", async () => {
@@ -123,21 +130,21 @@ describe("tasks routes", () => {
   //   expect(error.issues[0].code).toBe(ZodIssueCode.too_small);
   // });
 
-  // it("patch /tasks/{id} validates the id param", async () => {
-  //   const response = await client.tasks[":id"].$patch({
-  //     param: {
-  //       // @ts-expect-error
-  //       id: "wat",
-  //     },
-  //     json: {},
-  //   });
-  //   expect(response.status).toBe(422);
-  //   if (response.status === 422) {
-  //     const json = await response.json();
-  //     expect(json.error.issues[0].path[0]).toBe("id");
-  //     expect(json.error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.EXPECTED_NUMBER);
-  //   }
-  // });
+  it("patch /tasks/{id} validates the id param", async () => {
+    const response = await client.tasks[":id"].$patch({
+      param: {
+        // @ts-expect-error
+        id: "wat",
+      },
+      json: {},
+    });
+    expect(response.status).toBe(422);
+    if (response.status === 422) { // Added for TS narrowing
+      const { error } = await response.json();
+      expect(error.issues[0].path[0]).toBe("id");
+      expect(error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.EXPECTED_NUMBER);
+    }
+  });
 
   // it("patch /tasks/{id} validates empty body", async () => {
   //   const response = await client.tasks[":id"].$patch({
