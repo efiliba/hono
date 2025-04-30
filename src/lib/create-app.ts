@@ -1,8 +1,9 @@
-import { pinoLogger } from "@/middlewares/pino-logger";
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { notFound, onError, serveEmojiFavicon, defaultHook } from "helpers";
 
-import type { AppBindings } from "./types";
+import { pinoLogger } from "@/middlewares/pino-logger";
+import { defaultHook, notFound, onError, serveEmojiFavicon } from "helpers";
+
+import type { AppBindings, AppOpenAPI } from "./types";
 
 export function createRouter() {
   return new OpenAPIHono<AppBindings>({ strict: false, defaultHook }); // ignore trailing /
@@ -18,4 +19,12 @@ export default function createApp() {
   app.onError(onError);
 
   return app;
+}
+
+// Create a router for tests with the same middleware and error handlers, ...
+export function createTestApp(router: AppOpenAPI) {
+  const testApp = createApp();
+  testApp.route("/", router);
+
+  return testApp;
 }

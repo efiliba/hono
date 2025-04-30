@@ -85,7 +85,7 @@ export const create = createRoute({
   },
   tags,
   responses: {
-    [HttpStatusCodes.OK]: { // 200
+    [HttpStatusCodes.CREATED]: { // 201
       content: {
         "application/json": {
           schema: selectTasksSchema,
