@@ -6,7 +6,7 @@ import db from "@/db";
 import { tasks } from "@/db/schema";
 import { HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
-import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute } from "./tasks.routes";
+import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute, RemoveRoute } from "./tasks.routes";
 
 export const list: AppRouteHandler<ListRoute> = async context =>
   context.json(await db.query.tasks.findMany());
@@ -20,7 +20,6 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (context) => {
   if (!task) {
     return context.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
   }
-
   return context.json(task, HttpStatusCodes.OK);
 };
 
@@ -42,6 +41,16 @@ export const patch: AppRouteHandler<PatchRoute> = async (context) => {
   if (!task) {
     return context.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
   }
-
   return context.json(task, HttpStatusCodes.OK);
+};
+
+export const remove: AppRouteHandler<RemoveRoute> = async (context) => {
+  const { id } = context.req.valid("param");
+  const result = await db.delete(tasks)
+    .where(eq(tasks.id, id));
+
+  if (result.rowsAffected > 0) {
+    return context.body(null, HttpStatusCodes.NO_CONTENT);
+  }
+  return context.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
 };
