@@ -26,7 +26,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (context) => {
 export const create: AppRouteHandler<CreateRoute> = async (context) => {
   const task = context.req.valid("json");
   const [inserted] = await db.insert(tasks).values(task).returning();
-  return context.json(inserted, HttpStatusCodes.OK);
+  return context.json(inserted, HttpStatusCodes.CREATED);
 };
 
 export const patch: AppRouteHandler<PatchRoute> = async (context) => {

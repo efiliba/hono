@@ -16,14 +16,26 @@ if (env.NODE_ENV !== "test") {
   throw new Error("NODE_ENV must be 'test'");
 }
 
-const client = testClient(createTestApp(router));
+interface TasksTestClient {
+  tasks: {
+    "$get": () => Promise<Response>;
+    "$post": (args: { json: { name: string; done: boolean } }) => Promise<Response>;
+    ":id": {
+      $get: (args: { param: { id: number } }) => Promise<Response>;
+      $patch: (args: { param: { id: number }; json: { name?: string; done?: boolean } }) => Promise<Response>;
+      $delete: (args: { param: { id: number } }) => Promise<Response>;
+    };
+  };
+}
 
-const testClientTypeApp = createApp();
-//    ^?
-const testClientTypeRouter = testClientTypeApp.route("/", router);
-//    ^?
-const testClientType = testClient(testClientTypeRouter);
-//    ^?
+const client = testClient(createTestApp(router)) as TasksTestClient;
+
+// const testClientTypeApp = createApp();
+// //    ^?
+// const testClientTypeRouter = testClientTypeApp.route("/", router);
+// //    ^?
+// const testClientType = testClient(testClientTypeRouter);
+// //    ^?
 
 describe("tasks routes", () => {
   beforeAll(async () => {
@@ -61,7 +73,7 @@ describe("tasks routes", () => {
     });
     const json = await response.json();
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(json.name).toBe(name);
     expect(json.done).toBe(false);
   });
@@ -69,10 +81,10 @@ describe("tasks routes", () => {
   it("get /tasks lists all tasks", async () => {
     const response = await client.tasks.$get();
     const json = await response.json();
-
     expect(response.status).toBe(200);
-    expectTypeOf(json).toBeArray();
-    //   expect(json.length).toBe(1);
+    // expectTypeOf(json).toBeArray();
+    expect(Array.isArray(json)).toBe(true);
+    expect(json).toHaveLength(1);
   });
 
   it("get /tasks/{id} validates the id param", async () => {

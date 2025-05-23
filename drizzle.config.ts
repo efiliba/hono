@@ -8,6 +8,6 @@ export default defineConfig({
   dialect: "sqlite",
   dbCredentials: {
     url: env.DATABASE_URL,
-    authToken: env.DATABASE_AUTH_TOKEN,
+    // authToken: env.DATABASE_AUTH_TOKEN,
   },
 });
