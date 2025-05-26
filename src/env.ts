@@ -21,9 +21,9 @@ const EnvSchema = z.object({
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]),
   DATABASE_URL: z.string().url(),
   DATABASE_AUTH_TOKEN: z.string().optional(),
-}).superRefine((input, ctx) => {
+}).superRefine((input, contex) => {
   if (input.NODE_ENV === "production" && !input.DATABASE_AUTH_TOKEN) {
-    ctx.addIssue({
+    contex.addIssue({
       code: z.ZodIssueCode.invalid_type,
       expected: "string",
       received: "undefined",
@@ -35,8 +35,7 @@ const EnvSchema = z.object({
 
 export type env = z.infer<typeof EnvSchema>;
 
-// eslint-disable-next-line ts/no-redeclare
-const { data: env, error } = EnvSchema.safeParse(process.env);
+const { data, error } = EnvSchema.safeParse(process.env);
 
 if (error) {
   console.error("❌ Invalid env:");
@@ -44,4 +43,4 @@ if (error) {
   process.exit(1);
 }
 
-export default env!;
+export default data!;

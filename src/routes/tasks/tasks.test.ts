@@ -8,7 +8,7 @@ import { ZodIssueCode } from "zod";
 import env from "@/env";
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/lib/constants";
 import createApp, { createTestApp } from "@/lib/create-app";
-import { HttpStatusPhrases } from "helpers";
+import { HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
 import router from "./tasks.index";
 
@@ -55,7 +55,7 @@ describe("tasks routes", () => {
     });
     const { error } = await response.json();
 
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY); // 422
 
     expect(error.issues[0].path[0]).toBe("name");
     expect(error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.REQUIRED);
@@ -73,7 +73,7 @@ describe("tasks routes", () => {
     });
     const json = await response.json();
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(HttpStatusCodes.CREATED); // 201
     expect(json.name).toBe(name);
     expect(json.done).toBe(false);
   });
@@ -81,7 +81,7 @@ describe("tasks routes", () => {
   it("get /tasks lists all tasks", async () => {
     const response = await client.tasks.$get();
     const json = await response.json();
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(HttpStatusCodes.OK); // 200
     // expectTypeOf(json).toBeArray();
     expect(Array.isArray(json)).toBe(true);
     expect(json).toHaveLength(1);
@@ -96,7 +96,7 @@ describe("tasks routes", () => {
     });
     const { error } = await response.json();
 
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY); // 422;
     expect(error.issues[0].path[0]).toBe("id");
     expect(error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.EXPECTED_NUMBER);
   });
@@ -109,7 +109,7 @@ describe("tasks routes", () => {
     });
     const { message } = await response.json();
 
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(HttpStatusCodes.NOT_FOUND); // 404
     expect(message).toBe(HttpStatusPhrases.NOT_FOUND);
   });
 
@@ -121,7 +121,7 @@ describe("tasks routes", () => {
     });
     const json = await response.json();
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(HttpStatusCodes.OK); // 200
     expect(json.name).toBe(name);
     expect(json.done).toBe(false);
   });
@@ -137,7 +137,7 @@ describe("tasks routes", () => {
   //   });
   //   const { error } = await response.json();
 
-  //   expect(response.status).toBe(422);
+  //   expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY) // 422;
   //   expect(error.issues[0].path[0]).toBe("name");
   //   expect(error.issues[0].code).toBe(ZodIssueCode.too_small);
   // });
@@ -150,8 +150,8 @@ describe("tasks routes", () => {
       },
       json: {},
     });
-    expect(response.status).toBe(422);
-    if (response.status === 422) { // Added for TS narrowing
+    expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY); // 422;
+    if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) { // Added for TS narrowing
       const { error } = await response.json();
       expect(error.issues[0].path[0]).toBe("id");
       expect(error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.EXPECTED_NUMBER);
@@ -165,8 +165,8 @@ describe("tasks routes", () => {
   //     },
   //     json: {},
   //   });
-  //   expect(response.status).toBe(422);
-  //   if (response.status === 422) {
+  //   expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY) // 422;
+  //   if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
   //     const json = await response.json();
   //     expect(json.error.issues[0].code).toBe(ZOD_ERROR_CODES.INVALID_UPDATES);
   //     expect(json.error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.NO_UPDATES);
@@ -184,7 +184,7 @@ describe("tasks routes", () => {
     });
     const { done } = await response.json();
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(HttpStatusCodes.OK); // 200
     expect(done).toBe(true);
   });
 
@@ -197,7 +197,7 @@ describe("tasks routes", () => {
     });
     const { error } = await response.json();
 
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY); // 422
     expect(error.issues[0].path[0]).toBe("id");
     expect(error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.EXPECTED_NUMBER);
   });
@@ -209,6 +209,6 @@ describe("tasks routes", () => {
       },
     });
 
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(HttpStatusCodes.NO_CONTENT); // 204
   });
 });

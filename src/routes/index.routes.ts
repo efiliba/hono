@@ -20,7 +20,7 @@ const router = createRouter().openapi(
       },
     },
   }),
-  c => c.json({
+  context => context.json({
     message: "Tasks API",
   }),
 );

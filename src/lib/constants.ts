@@ -12,10 +12,10 @@ export const ZOD_ERROR_CODES = {
   INVALID_UPDATES: "invalid_updates",
 };
 
-export const notFoundSchema = z.object({
-  message: z.string(),
-}).openapi({
-  example: {
-    message: HttpStatusPhrases.NOT_FOUND,
-  },
-});
+export const notFoundSchema = z
+  .object({ message: z.string() })
+  .openapi({
+    example: {
+      message: HttpStatusPhrases.NOT_FOUND,
+    },
+  });

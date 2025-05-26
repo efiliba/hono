@@ -3,28 +3,19 @@ import type { StatusCode } from "hono/utils/http-status";
 
 import { INTERNAL_SERVER_ERROR, OK } from "./http-status-codes";
 
-const onError: ErrorHandler = (err, c) => {
-  const currentStatus = "status" in err
-    ? err.status
-    : c.newResponse(null).status;
+export const onError: ErrorHandler = (error, context) => {
+  const currentStatus = ("status" in error ? error.status : context.newResponse(null).status) as StatusCode;
 
-  const statusCode = currentStatus !== OK
-    ? (currentStatus as StatusCode)
-    : INTERNAL_SERVER_ERROR;
+  const statusCode = currentStatus !== OK ? currentStatus : INTERNAL_SERVER_ERROR;
 
   // eslint-disable-next-line node/no-process-env
-  const env = c.env?.NODE_ENV || process.env?.NODE_ENV;
+  const env = context.env?.NODE_ENV || process.env?.NODE_ENV;
 
-  return c.json(
+  return context.json(
     {
-      message: err.message,
-
-      stack: env === "production"
-        ? undefined
-        : err.stack,
+      message: error.message,
+      stack: env === "production" ? undefined : error.stack,
     },
     statusCode as any,
   );
 };
-
-export default onError;
