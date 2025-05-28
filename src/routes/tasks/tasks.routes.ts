@@ -37,10 +37,10 @@ const idParamsSchema = z.object({
 export const getOne = createRoute({
   path: "/tasks/{id}",
   method: "get",
+  tags,
   request: {
     params: idParamsSchema,
   },
-  tags,
   responses: {
     [HttpStatusCodes.OK]: { // 200
       content: {
@@ -72,6 +72,7 @@ export const getOne = createRoute({
 export const create = createRoute({
   path: "/tasks",
   method: "post",
+  tags,
   request: {
     body: {
       content: {
@@ -83,7 +84,6 @@ export const create = createRoute({
       required: true,
     },
   },
-  tags,
   responses: {
     [HttpStatusCodes.CREATED]: { // 201
       content: {
@@ -107,6 +107,7 @@ export const create = createRoute({
 export const patch = createRoute({
   path: "/tasks/{id}",
   method: "patch",
+  tags,
   request: {
     params: idParamsSchema,
     body: {
@@ -119,7 +120,6 @@ export const patch = createRoute({
       required: true,
     },
   },
-  tags,
   responses: {
     [HttpStatusCodes.OK]: { // 200
       content: {
@@ -152,10 +152,10 @@ export const patch = createRoute({
 export const remove = createRoute({
   path: "/tasks/{id}",
   method: "delete",
+  tags,
   request: {
     params: idParamsSchema,
   },
-  tags,
   responses: {
     [HttpStatusCodes.NO_CONTENT]: { // 204
       description: "Task deleted",
