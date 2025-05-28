@@ -1,7 +1,5 @@
-import configureOpenAPI from "@/lib/configure-open-api";
-import createApp from "@/lib/create-app";
-import index from "@/routes/index.routes";
-import tasks from "@/routes/tasks/tasks.index";
+import { configureOpenAPI, createApp } from "@/lib";
+import { index, tasks } from "@/routes";
 
 const app = createApp();
 
@@ -11,18 +9,12 @@ const app = createApp();
 
 // export type AppType = typeof _app;
 
-const routes = [
-  index,
-  tasks,
-] as const;
-
+const routes = [index, tasks] as const;
 routes.forEach(route => app.route("/", route));
 
 configureOpenAPI(app);
 
-// app.get("/", (c) => {
-//   return c.text("Hello Open API Hono!");
-// });
+// app.get("/", context => context.text("Hello Hono!"));
 
 // app.get("/error", (c) => {
 //   c.var.logger.info("Test logger output in pino logs");

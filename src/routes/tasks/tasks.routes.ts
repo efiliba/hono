@@ -1,7 +1,7 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
 import { insertTasksSchema, patchTasksSchema, selectTasksSchema } from "@/db/schema";
-import { notFoundSchema } from "@/lib/constants";
+import { notFoundSchema } from "@/lib";
 import { createErrorSchema, HttpStatusCodes } from "helpers";
 
 const tags = ["Tasks"];
@@ -11,7 +11,7 @@ export const list = createRoute({
   method: "get",
   tags,
   responses: {
-    200: {
+    [HttpStatusCodes.OK]: { // 200
       content: {
         "application/json": {
           schema: z.array(selectTasksSchema),

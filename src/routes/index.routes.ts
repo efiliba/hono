@@ -1,8 +1,8 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
-import { createRouter } from "@/lib/create-app";
+import { createRouter } from "@/lib";
 
-const router = createRouter().openapi(
+export const index = createRouter().openapi(
   createRoute({
     tags: ["Index"],
     method: "get",
@@ -24,5 +24,3 @@ const router = createRouter().openapi(
     message: "Tasks API",
   }),
 );
-
-export default router;

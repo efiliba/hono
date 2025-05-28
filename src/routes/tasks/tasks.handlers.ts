@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 
-import type { AppRouteHandler } from "@/lib/types";
+import type { AppRouteHandler } from "@/lib";
 
 import db from "@/db";
 import { tasks } from "@/db/schema";

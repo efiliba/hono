@@ -9,7 +9,7 @@ export function createRouter() {
   return new OpenAPIHono<AppBindings>({ strict: false, defaultHook }); // ignore trailing /
 }
 
-export default function createApp() {
+export function createApp() {
   const app = createRouter();
 
   app.use(serveEmojiFavicon("😀"));
