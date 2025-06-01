@@ -10,6 +10,9 @@ const client = createClient({
   authToken: env.DATABASE_AUTH_TOKEN,
 });
 
+// Enable Write-Ahead Logging mode - improve write performance
+await client.execute("PRAGMA journal_mode=WAL;");
+
 export default drizzle(client, {
   schema,
 });

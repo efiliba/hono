@@ -34,7 +34,7 @@ createRouter()
 
 [tasks.routes.ts](src/routes/tasks/tasks.routes.ts)\
 Defines routes - e.g. GET /tasks and validates the route by passing a schema\
-**request** are used to validate the accepted params, e.g. /tasks/{id} \
+**request** are used to validate the accepted params, e.g. /tasks/{id} and body\
 **responses** are used to document all the responses this end-point handles (including errors)\
 The schema can be auto generated using drizzle-zod (as in [src/db/schema](src/db/schema.ts))
 
