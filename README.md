@@ -64,6 +64,6 @@ export const selectTasksSchema = createSelectSchema(tasks);
 Respond to requests, by quering the database
 
 ```typescript
-export const list: AppRouteHandler<ListRoute> = async context =>
+export const list: AppRouteHandler<GetRoute> = async context =>
   context.json(await db.query.tasks.findMany());
 ```

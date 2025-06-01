@@ -9,11 +9,12 @@ export default antfu({
     semi: true,
     quotes: "double",
   },
-  ignores: ["**/migrations/*"],
+  ignores: ["**/migrations/*", "README.md"],
 }, {
   rules: {
     "no-console": ["warn"],
     "antfu/no-top-level-await": ["off"],
+    "antfu/top-level-function": ["off"],
     "node/prefer-global/process": ["off"],
     "node/no-process-env": ["error"],
     "perfectionist/sort-imports": ["error", {

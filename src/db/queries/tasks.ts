@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
 
-import type { InsertTask, UpdateTask } from "@/lib";
-
 import db from "@/db";
 import { tasks } from "@/db/schema";
+
+import type { InsertTask, UpdateTask } from "../types";
 
 export const getTasks = () => db.query.tasks.findMany();
 

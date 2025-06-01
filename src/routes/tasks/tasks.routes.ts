@@ -6,7 +6,7 @@ import { createErrorSchema, HttpStatusCodes } from "helpers";
 
 const tags = ["Tasks"];
 
-export const list = createRoute({
+export const get = createRoute({
   path: "/tasks",
   method: "get",
   tags,
@@ -34,7 +34,7 @@ const idParamsSchema = z.object({
   }),
 });
 
-export const getOne = createRoute({
+export const getById = createRoute({
   path: "/tasks/{id}",
   method: "get",
   tags,
@@ -179,8 +179,8 @@ export const remove = createRoute({
   },
 });
 
-export type ListRoute = typeof list;
-export type GetOneRoute = typeof getOne;
+export type GetRoute = typeof get;
+export type GetByIdRoute = typeof getById;
 export type CreateRoute = typeof create;
 export type PatchRoute = typeof patch;
 export type RemoveRoute = typeof remove;

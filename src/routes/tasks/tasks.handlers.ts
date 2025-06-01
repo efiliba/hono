@@ -3,12 +3,12 @@ import type { AppRouteHandler } from "@/lib";
 import { createTask, deleteTask, getTask, getTasks, updateTask } from "@/db/queries/tasks";
 import { HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
-import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute, RemoveRoute } from "./tasks.routes";
+import type { CreateRoute, GetByIdRoute, GetRoute, PatchRoute, RemoveRoute } from "./tasks.routes";
 
-export const list: AppRouteHandler<ListRoute> = async context =>
+export const get: AppRouteHandler<GetRoute> = async context =>
   context.json(await getTasks());
 
-export const getOne: AppRouteHandler<GetOneRoute> = async (context) => {
+export const getById: AppRouteHandler<GetByIdRoute> = async (context) => {
   const { id } = context.req.valid("param");
   const task = await getTask(id);
 
