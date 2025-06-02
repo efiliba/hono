@@ -1,8 +1,8 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
 import { insertUsersSchema, selectUsersSchema } from "@/db/schema";
-import { notFoundSchema } from "@/lib";
-import { createErrorSchema, HttpStatusCodes } from "helpers";
+import { notFoundSchema, ZOD_ERROR_MESSAGES } from "@/lib";
+import { createErrorSchema, HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
 const tags = ["Users"];
 
@@ -92,6 +92,37 @@ export const create = createRoute({
         },
       },
       description: "The created user",
+    },
+    [HttpStatusCodes.CONFLICT]: { // 409
+      content: {
+        "application/json": {
+          schema: z.object({
+            success: z.boolean().openapi({ example: false }),
+            error: z
+              .object({
+                issues: z.array(
+                  z.object({
+                    code: z.string(),
+                    path: z.array(z.string()),
+                    message: z.string(),
+                  }),
+                ),
+                name: z.string(),
+              })
+              .openapi({
+                example: {
+                  issues: [{
+                    code: HttpStatusPhrases.CONFLICT,
+                    path: ["email"],
+                    message: ZOD_ERROR_MESSAGES.DUPLICATE_EMAIL,
+                  }],
+                  name: "ZodError",
+                },
+              }),
+          }),
+        },
+      },
+      description: "Email already exists",
     },
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: { // 422
       content: {

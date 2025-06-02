@@ -1,12 +1,12 @@
 /* eslint-disable ts/ban-ts-comment */
 import { testClient } from "hono/testing";
-import { execSync } from "node:child_process";
-import fs from "node:fs";
-import { afterAll, beforeAll, describe, expect, expectTypeOf, it } from "vitest";
-import { ZodIssueCode } from "zod";
+// import { execSync } from "node:child_process";
+// import fs from "node:fs";
+// import { afterAll, beforeAll, describe, expect, expectTypeOf, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import env from "@/env";
-import { createApp, createTestApp, ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/lib";
+import { createTestApp, ZOD_ERROR_MESSAGES } from "@/lib";
 import { HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
 import { tasks } from "./tasks.index";
@@ -37,13 +37,13 @@ const client = testClient(createTestApp(tasks)) as TasksTestClient;
 // //    ^?
 
 describe("tasks routes", () => {
-  beforeAll(async () => {
-    execSync("pnpm drizzle-kit push");
-  });
+  // beforeAll(async () => {
+  //   execSync("pnpm drizzle-kit push");
+  // });
 
-  afterAll(async () => {
-    fs.rmSync("test.db", { force: true });
-  });
+  // afterAll(async () => {
+  //   fs.rmSync("test.db", { force: true });
+  // });
 
   it("post /tasks validates the body when creating", async () => {
     const response = await client.tasks.$post({

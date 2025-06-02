@@ -11,6 +11,11 @@ export const getUser = (email: string) =>
   });
 
 export const createUser = async (user: InsertUser) => {
-  const [created] = await db.insert(users).values(user).returning();
-  return created;
+  try {
+    const [created] = await db.insert(users).values(user).returning();
+    return created;
+  }
+  catch {
+    return false;
+  }
 };

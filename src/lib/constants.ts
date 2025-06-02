@@ -7,6 +7,7 @@ export const ZOD_ERROR_MESSAGES = {
   EXPECTED_NUMBER: "Expected number, received nan",
   INVALID_EMAIL: "Invalid email",
   NO_UPDATES: "No updates provided",
+  DUPLICATE_EMAIL: "Email already exists",
 };
 
 export const ZOD_ERROR_CODES = {
