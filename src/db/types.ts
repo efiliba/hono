@@ -1,11 +1,11 @@
 import type { z } from "zod";
 
-import type { insertTasksSchema, insertUsersSchema, patchTasksSchema, selectUsersSchema } from "./schema";
+import type { insertTaskSchema, insertUserSchema, patchTaskSchema, selectUsersSchema } from "./schemas";
 
 export type User = z.infer<typeof selectUsersSchema>;
 
-export type InsertUser = z.infer<typeof insertUsersSchema>;
+export type InsertUser = z.infer<typeof insertUserSchema>;
 
-export type InsertTask = z.infer<typeof insertTasksSchema>;
+export type InsertTask = z.infer<typeof insertTaskSchema>;
 
-export type UpdateTask = z.infer<typeof patchTasksSchema>;
+export type UpdateTask = z.infer<typeof patchTaskSchema>;

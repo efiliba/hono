@@ -7,7 +7,7 @@ import { createUser, getUser, getUsers } from "@/db/queries/users";
 import { ZOD_ERROR_MESSAGES } from "@/lib";
 import { HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
-import type { CreateRoute, GetByEmailRoute, GetRoute } from "./users.routes";
+import type { CreateRoute, GetByEmailRoute, GetRoute, LoginRoute } from "./users.routes";
 
 export const get: AppRouteHandler<GetRoute> = async context => {
   const users = await getUsers();
@@ -60,4 +60,15 @@ export const create: AppRouteHandler<CreateRoute> = async (context) => {
     }
     throw error;
   }
+};
+
+export const authenticate: AppRouteHandler<LoginRoute> = async context => {
+  const { email, password } = context.req.valid("json");
+  const user = await getUser(email);
+
+  const authenticated = user && await bcrypt.compare(password, user.password);
+  if (authenticated) {
+    return context.json(user, HttpStatusCodes.OK);
+  }
+  return context.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED);
 };

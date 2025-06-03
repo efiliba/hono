@@ -47,9 +47,9 @@ describe("users routes", () => {
   });
 
   const email = "a@b.com";
-  const firstName = "firstName";
-  const surname = "surname";
-  const password = "password";
+  const firstName = "first_name";
+  const surname = "sur_name";
+  const password = "passw0rd";
 
   it("post /users creates a user with hashed password", async () => {
     const response = await client.users.$post({

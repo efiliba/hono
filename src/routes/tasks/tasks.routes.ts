@@ -1,6 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
-import { insertTasksSchema, patchTasksSchema, selectTasksSchema } from "@/db/schema";
+import { insertTaskSchema, patchTaskSchema, selectTasksSchema } from "@/db/schemas";
 import { notFoundSchema } from "@/lib";
 import { createErrorSchema, HttpStatusCodes } from "helpers";
 
@@ -77,7 +77,7 @@ export const create = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: insertTasksSchema,
+          schema: insertTaskSchema,
         },
       },
       description: "The task to create",
@@ -96,7 +96,7 @@ export const create = createRoute({
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: { // 422
       content: {
         "application/json": {
-          schema: createErrorSchema(insertTasksSchema),
+          schema: createErrorSchema(insertTaskSchema),
         },
       },
       description: "The validation error",
@@ -113,7 +113,7 @@ export const patch = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: patchTasksSchema,
+          schema: patchTaskSchema,
         },
       },
       description: "The task to update",
@@ -140,7 +140,7 @@ export const patch = createRoute({
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: { // 422
       content: {
         "application/json": {
-          schema: createErrorSchema(patchTasksSchema)
+          schema: createErrorSchema(patchTaskSchema)
             .or(createErrorSchema(idParamsSchema)),
         },
       },

@@ -1,5 +1,5 @@
 import db from "@/db";
-import { users } from "@/db/schema";
+import { users } from "@/db/schemas";
 
 import type { InsertUser } from "../types";
 

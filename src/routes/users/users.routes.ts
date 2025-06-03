@@ -1,6 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
-import { insertUsersSchema, selectUsersSchema } from "@/db/schema";
+import { insertUserSchema, loginSchema, selectUsersSchema } from "@/db/schemas";
 import { notFoundSchema, ZOD_ERROR_MESSAGES } from "@/lib";
 import { createErrorSchema, HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
@@ -77,7 +77,7 @@ export const create = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: insertUsersSchema,
+          schema: insertUserSchema,
         },
       },
       description: "The user to create",
@@ -127,7 +127,54 @@ export const create = createRoute({
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: { // 422
       content: {
         "application/json": {
-          schema: createErrorSchema(insertUsersSchema),
+          schema: createErrorSchema(insertUserSchema),
+        },
+      },
+      description: "The validation error",
+    },
+  },
+});
+
+export const login = createRoute({
+  path: "/login",
+  method: "post",
+  tags,
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            email: z.string().email(),
+            password: z.string().min(1),
+          }),
+        },
+      },
+      required: true,
+    },
+  },
+  responses: {
+    [HttpStatusCodes.OK]: { // 200
+      content: {
+        "application/json": {
+          schema: selectUsersSchema,
+        },
+      },
+      description: "The logged in user",
+    },
+    [HttpStatusCodes.UNAUTHORIZED]: { // 401
+      content: {
+        "application/json": {
+          schema: z.object({
+            message: z.string(),
+          }),
+        },
+      },
+      description: "Invalid credentials",
+    },
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: { // 422
+      content: {
+        "application/json": {
+          schema: createErrorSchema(loginSchema),
         },
       },
       description: "The validation error",
@@ -138,3 +185,4 @@ export const create = createRoute({
 export type GetRoute = typeof get;
 export type GetByEmailRoute = typeof getByEmail;
 export type CreateRoute = typeof create;
+export type LoginRoute = typeof login;
