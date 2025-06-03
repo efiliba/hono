@@ -9,9 +9,11 @@ import { HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
 import type { CreateRoute, GetByEmailRoute, GetRoute, LoginRoute } from "./users.routes";
 
+const extractPassword = <T extends { password: string }>({ password, ...rest }: T) => rest;
+
 export const get: AppRouteHandler<GetRoute> = async context => {
   const users = await getUsers();
-  return context.json(users.map(({ password, ...user }) => user));
+  return context.json(users.map(extractPassword));
 };
 
 export const getByEmail: AppRouteHandler<GetByEmailRoute> = async (context) => {
@@ -22,8 +24,7 @@ export const getByEmail: AppRouteHandler<GetByEmailRoute> = async (context) => {
     return context.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
   }
   
-  const { password, ...userWithoutPassword } = user;
-  return context.json(userWithoutPassword, HttpStatusCodes.OK);
+  return context.json(extractPassword(user), HttpStatusCodes.OK);
 };
 
 const createEmailConflictError = (context: Context) =>   
@@ -43,16 +44,10 @@ const createEmailConflictError = (context: Context) =>
 
 export const create: AppRouteHandler<CreateRoute> = async (context) => {
   const user = context.req.valid("json");
-  
-  const hashedPassword = await bcrypt.hash(user.password, 10);
-  const userWithHashedPassword = {
-    ...user,
-    password: hashedPassword,
-  };
 
   try {
-    const { password, ...newUser } = await createUser(userWithHashedPassword);
-    return context.json(newUser, HttpStatusCodes.CREATED);
+    const created = await createUser({ ...user, password: await bcrypt.hash(user.password, 10) });
+    return context.json(extractPassword(created), HttpStatusCodes.CREATED);
   }
   catch (error: unknown) {
     if (error instanceof LibsqlError && error.code === "SQLITE_CONSTRAINT_PRIMARYKEY") {
@@ -68,7 +63,7 @@ export const authenticate: AppRouteHandler<LoginRoute> = async context => {
 
   const authenticated = user && await bcrypt.compare(password, user.password);
   if (authenticated) {
-    return context.json(user, HttpStatusCodes.OK);
+    return context.json(extractPassword(user), HttpStatusCodes.OK);
   }
   return context.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED);
 };

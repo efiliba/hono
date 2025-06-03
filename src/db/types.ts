@@ -1,8 +1,6 @@
 import type { z } from "zod";
 
-import type { insertTaskSchema, insertUserSchema, patchTaskSchema, selectUsersSchema } from "./schemas";
-
-export type User = z.infer<typeof selectUsersSchema>;
+import type { insertTaskSchema, insertUserSchema, patchTaskSchema } from "./schemas";
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 

@@ -22,6 +22,9 @@ interface UsersTestClient {
       $get: (args: { param: { email: string } }) => Promise<Response>;
     };
   };
+  login: {
+    $post: (args: { json: { email: string; password: string } }) => Promise<Response>;
+  };
 }
 
 const client = testClient(createTestApp(users)) as UsersTestClient;
@@ -134,5 +137,34 @@ describe("users routes", () => {
     expect(user.firstName).toBe(firstName);
     expect(user.surname).toBe(surname);
     expect(user.password).toBeUndefined();
+  });
+
+  it("post /login authenticates a user", async () => {
+    const response = await client.login.$post({
+      json: {
+        email,
+        password,
+      },
+    });
+    const user = await response.json();
+
+    expect(response.status).toBe(HttpStatusCodes.OK); // 200
+    expect(user.email).toBe(email);
+    expect(user.firstName).toBe(firstName);
+    expect(user.surname).toBe(surname);
+    expect(user.password).toBeUndefined();
+  });
+
+  it("post /login returns Unauthorized when password is wrong", async () => {
+    const response = await client.login.$post({
+      json: {
+        email,
+        password: "wrong_password",
+      },
+    });
+    const { message } = await response.json();
+
+    expect(response.status).toBe(HttpStatusCodes.UNAUTHORIZED); // 401
+    expect(message).toBe(HttpStatusPhrases.UNAUTHORIZED);
   });
 });
