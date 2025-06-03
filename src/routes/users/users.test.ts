@@ -16,8 +16,8 @@ if (env.NODE_ENV !== "test") {
 
 interface UsersTestClient {
   users: {
-    "$get": () => Promise<Response>;
-    "$post": (args: { json: InsertUser }) => Promise<Response>;
+    $get: () => Promise<Response>;
+    $post: (args: { json: InsertUser }) => Promise<Response>;
     ":email": {
       $get: (args: { param: { email: string } }) => Promise<Response>;
     };
@@ -26,7 +26,7 @@ interface UsersTestClient {
 
 const client = testClient(createTestApp(users)) as UsersTestClient;
 
-describe("tasks routes", () => {
+describe("users routes", () => {
   it("post /users validates the body when creating", async () => {
     const response = await client.users.$post({
       // @ts-expect-error missing required fields
@@ -51,7 +51,7 @@ describe("tasks routes", () => {
   const surname = "surname";
   const password = "password";
 
-  it("post /users creates a user", async () => {
+  it("post /users creates a user with hashed password", async () => {
     const response = await client.users.$post({
       json: {
         email,
@@ -60,13 +60,13 @@ describe("tasks routes", () => {
         password,
       },
     });
-    const json = await response.json();
+    const user = await response.json();
 
     expect(response.status).toBe(HttpStatusCodes.CREATED); // 201
-    expect(json.email).toBe(email);
-    expect(json.firstName).toBe(firstName);
-    expect(json.surname).toBe(surname);
-    expect(json.password).toBe(password);
+    expect(user.email).toBe(email);
+    expect(user.firstName).toBe(firstName);
+    expect(user.surname).toBe(surname);
+    expect(user.password).toBeUndefined();
   });
 
   it("post /users validates duplicate email", async () => {
@@ -87,11 +87,12 @@ describe("tasks routes", () => {
 
   it("get /users lists all users", async () => {
     const response = await client.users.$get();
-    const json = await response.json();
+    const users = await response.json();
 
     expect(response.status).toBe(HttpStatusCodes.OK); // 200
-    expect(Array.isArray(json)).toBe(true);
-    expect(json).toHaveLength(1);
+    expect(Array.isArray(users)).toBe(true);
+    expect(users).toHaveLength(1);
+    expect(users[0].password).toBeUndefined();
   });
 
   it("get /users/{email} validates the email param", async () => {
@@ -126,12 +127,12 @@ describe("tasks routes", () => {
         email,
       },
     });
-    const json = await response.json();
+    const user = await response.json();
 
     expect(response.status).toBe(HttpStatusCodes.OK); // 200
-    expect(json.email).toBe(email);
-    expect(json.firstName).toBe(firstName);
-    expect(json.surname).toBe(surname);
-    expect(json.password).toBe(password);
+    expect(user.email).toBe(email);
+    expect(user.firstName).toBe(firstName);
+    expect(user.surname).toBe(surname);
+    expect(user.password).toBeUndefined();
   });
 });

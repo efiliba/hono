@@ -14,7 +14,8 @@ export const users = sqliteTable("users", {
     .$defaultFn(() => new Date()),
 });
 
-export const selectUsersSchema = createSelectSchema(users);
+export const selectUsersSchema = createSelectSchema(users)
+  .omit({ password: true });
 
 export const insertUsersSchema = createInsertSchema(users, {
   email: schema => schema.email(),
@@ -22,9 +23,7 @@ export const insertUsersSchema = createInsertSchema(users, {
   surname: schema => schema.min(1).max(50),
   password: schema => schema.min(1).max(50),
 })
-  .omit({
-    createdAt: true,
-  });
+  .omit({ createdAt: true });
 
 export const tasks = sqliteTable("tasks", {
   id: integer("id", { mode: "number" })

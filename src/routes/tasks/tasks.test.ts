@@ -14,8 +14,8 @@ if (env.NODE_ENV !== "test") {
 
 interface TasksTestClient {
   tasks: {
-    "$get": () => Promise<Response>;
-    "$post": (args: { json: { name: string; done: boolean } }) => Promise<Response>;
+    $get: () => Promise<Response>;
+    $post: (args: { json: { name: string; done: boolean } }) => Promise<Response>;
     ":id": {
       $get: (args: { param: { id: number } }) => Promise<Response>;
       $patch: (args: { param: { id: number }; json: { name?: string; done?: boolean } }) => Promise<Response>;
@@ -59,20 +59,20 @@ describe("tasks routes", () => {
         done: false,
       },
     });
-    const json = await response.json();
+    const task = await response.json();
 
     expect(response.status).toBe(HttpStatusCodes.CREATED); // 201
-    expect(json.name).toBe(name);
-    expect(json.done).toBe(false);
+    expect(task.name).toBe(name);
+    expect(task.done).toBe(false);
   });
 
   it("get /tasks lists all tasks", async () => {
     const response = await client.tasks.$get();
-    const json = await response.json();
+    const task = await response.json();
+
     expect(response.status).toBe(HttpStatusCodes.OK); // 200
-    // expectTypeOf(json).toBeArray();
-    expect(Array.isArray(json)).toBe(true);
-    expect(json).toHaveLength(1);
+    expect(Array.isArray(task)).toBe(true);
+    expect(task).toHaveLength(1);
   });
 
   it("get /tasks/{id} validates the id param", async () => {
@@ -107,11 +107,11 @@ describe("tasks routes", () => {
         id,
       },
     });
-    const json = await response.json();
+    const task = await response.json();
 
     expect(response.status).toBe(HttpStatusCodes.OK); // 200
-    expect(json.name).toBe(name);
-    expect(json.done).toBe(false);
+    expect(task.name).toBe(name);
+    expect(task.done).toBe(false);
   });
 
   // it("patch /tasks/{id} validates the body when updating", async () => {
@@ -138,6 +138,7 @@ describe("tasks routes", () => {
       },
       json: {},
     });
+  
     expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY); // 422;
     if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) { // Added for TS narrowing
       const { error } = await response.json();
