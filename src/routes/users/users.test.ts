@@ -16,14 +16,19 @@ if (env.NODE_ENV !== "test") {
 
 interface UsersTestClient {
   users: {
-    $get: () => Promise<Response>;
-    $post: (args: { json: InsertUser }) => Promise<Response>;
+    "$get": () => Promise<Response>;
+    "$post": (args: { json: InsertUser }) => Promise<Response>;
     ":email": {
       $get: (args: { param: { email: string } }) => Promise<Response>;
     };
   };
-  login: {
-    $post: (args: { json: { email: string; password: string } }) => Promise<Response>;
+  api: {
+    login: {
+      $post: (args: { json: { email: string; password: string } }) => Promise<Response>;
+    };
+    logout: {
+      $post: () => Promise<Response>;
+    };
   };
 }
 
@@ -139,13 +144,14 @@ describe("users routes", () => {
     expect(user.password).toBeUndefined();
   });
 
-  it("post /login authenticates a user", async () => {
-    const response = await client.login.$post({
+  it("post /api/login authenticates a user and sets a cookie", async () => {
+    const response = await client.api.login.$post({
       json: {
         email,
         password,
       },
     });
+    const cookies = response.headers.get("Set-Cookie");
     const user = await response.json();
 
     expect(response.status).toBe(HttpStatusCodes.OK); // 200
@@ -153,10 +159,11 @@ describe("users routes", () => {
     expect(user.firstName).toBe(firstName);
     expect(user.surname).toBe(surname);
     expect(user.password).toBeUndefined();
+    expect(cookies).toMatch(/authToken=.{20,};/);
   });
 
-  it("post /login returns Unauthorized when password is wrong", async () => {
-    const response = await client.login.$post({
+  it("post /api/login returns Unauthorized when password is wrong", async () => {
+    const response = await client.api.login.$post({
       json: {
         email,
         password: "wrong_password",
@@ -166,5 +173,13 @@ describe("users routes", () => {
 
     expect(response.status).toBe(HttpStatusCodes.UNAUTHORIZED); // 401
     expect(message).toBe(HttpStatusPhrases.UNAUTHORIZED);
+  });
+
+  it("post /logout deletes the cookie", async () => {
+    const response = await client.api.logout.$post();
+    const cookies = response.headers.get("Set-Cookie");
+
+    expect(response.status).toBe(HttpStatusCodes.OK); // 200
+    expect(cookies).toMatch(/authToken=;/); // Auth token is empty
   });
 });

@@ -12,8 +12,7 @@
 node_modules/
 
 # env
-.env
-.env.production
+.env*
 
 # logs
 logs/
@@ -34,3 +33,6 @@ src/db/migrations
 dev.db
 *.db-shm
 *.db-wal
+.env.test
+
+src/index.http

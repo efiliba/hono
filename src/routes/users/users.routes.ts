@@ -136,9 +136,9 @@ export const create = createRoute({
 });
 
 export const login = createRoute({
-  path: "/login",
+  path: "/api/login",
   method: "post",
-  tags,
+  tags: ["Auth"],
   request: {
     body: {
       content: {
@@ -159,7 +159,7 @@ export const login = createRoute({
           schema: selectUsersSchema,
         },
       },
-      description: "The logged in user",
+      description: "Log in the user",
     },
     [HttpStatusCodes.UNAUTHORIZED]: { // 401
       content: {
@@ -182,7 +182,26 @@ export const login = createRoute({
   },
 });
 
+export const logout = createRoute({
+  path: "/api/logout",
+  method: "post",
+  tags: ["Auth"],
+  responses: {
+    [HttpStatusCodes.OK]: { // 200
+      content: {
+        "application/json": {
+          schema: z.object({
+            message: z.string(),
+          }),
+        },
+      },
+      description: "Log out the user",
+    },
+  },
+});
+
 export type GetRoute = typeof get;
 export type GetByEmailRoute = typeof getByEmail;
 export type CreateRoute = typeof create;
 export type LoginRoute = typeof login;
+export type LogoutRoute = typeof logout;

@@ -7,4 +7,5 @@ export const users = createRouter()
   .openapi(routes.get, handlers.get)
   .openapi(routes.getByEmail, handlers.getByEmail)
   .openapi(routes.create, handlers.create)
-  .openapi(routes.login, handlers.authenticate);
+  .openapi(routes.login, handlers.authenticate)
+  .openapi(routes.logout, handlers.logout);
