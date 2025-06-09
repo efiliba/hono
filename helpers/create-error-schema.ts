@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-export type ZodSchema = z.ZodUnion<[z.ZodTypeAny]> | z.AnyZodObject | z.ZodArray<z.AnyZodObject>;
+export type ZodSchema = z.ZodUnion<[z.ZodTypeAny]> | z.AnyZodObject | z.ZodArray<z.AnyZodObject> | z.ZodEffects<any, any, any>;
 
 export function createErrorSchema<T extends ZodSchema>(schema: T) {
   const { error } = schema.safeParse(schema._def.typeName === z.ZodFirstPartyTypeKind.ZodArray ? [] : {});
