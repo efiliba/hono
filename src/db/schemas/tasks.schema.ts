@@ -1,5 +1,8 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { ZodIssueCode } from "zod";
+
+import { ZOD_ERROR_MESSAGES } from "@/lib";
 
 export const tasks = sqliteTable("tasks", {
   id: integer("id", { mode: "number" })
@@ -28,4 +31,14 @@ export const insertTaskSchema = createInsertSchema(tasks, {
     updatedAt: true,
   });
 
-export const patchTaskSchema = insertTaskSchema.partial();
+export const patchTaskSchema = insertTaskSchema.partial().superRefine((input, contex) => {
+  if (Object.keys(input).length === 0) {
+    contex.addIssue({
+      code: ZodIssueCode.invalid_type,
+      expected: "object",
+      received: "undefined",
+      path: ["name", "done"],
+      message: ZOD_ERROR_MESSAGES.NO_UPDATES,
+    });
+  }
+});

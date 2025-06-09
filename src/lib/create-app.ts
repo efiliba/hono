@@ -1,5 +1,8 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
+// import { csrf } from "hono/csrf";
+// import { jwt } from "hono/jwt";
 
+// import env from "@/env";
 import { pinoLogger } from "@/middlewares/pino-logger";
 import { defaultHook, notFound, onError, serveEmojiFavicon } from "helpers";
 
@@ -12,6 +15,8 @@ export function createRouter() {
 export function createApp() {
   const app = createRouter();
 
+  // app.use("*", csrf());
+  // app.use("/tasks/*", jwt({ secret: env.JWT_SECRET, cookie: "authToken" }));
   app.use(serveEmojiFavicon("😀"));
   app.use(pinoLogger());
 

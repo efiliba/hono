@@ -15,6 +15,9 @@ import type { CreateRoute, GetByEmailRoute, GetRoute, LoginRoute, LogoutRoute } 
 const extractPassword = <T extends { password: string }>({ password, ...rest }: T) => rest;
 
 export const get: AppRouteHandler<GetRoute> = async (context) => {
+  // const { sub: email } = context.get("jwtPayload");
+  // console.log("Logged in user - making request:", email);
+
   const users = await getUsers();
   return context.json(users.map(extractPassword));
 };
@@ -76,5 +79,5 @@ export const authenticate: AppRouteHandler<LoginRoute> = async (context) => {
 
 export const logout: AppRouteHandler<LogoutRoute> = async (context) => {
   deleteCookie(context, "authToken");
-  return context.json({ message: HttpStatusPhrases.OK });
+  return context.body(null, HttpStatusCodes.NO_CONTENT);
 };

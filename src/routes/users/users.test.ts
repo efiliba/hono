@@ -15,6 +15,12 @@ if (env.NODE_ENV !== "test") {
 }
 
 interface UsersTestClient {
+  login: {
+    $post: (args: { json: { email: string; password: string } }) => Promise<Response>;
+  };
+  logout: {
+    $get: () => Promise<Response>;
+  };
   users: {
     "$get": () => Promise<Response>;
     "$post": (args: { json: InsertUser }) => Promise<Response>;
@@ -22,17 +28,14 @@ interface UsersTestClient {
       $get: (args: { param: { email: string } }) => Promise<Response>;
     };
   };
-  api: {
-    login: {
-      $post: (args: { json: { email: string; password: string } }) => Promise<Response>;
-    };
-    logout: {
-      $post: () => Promise<Response>;
-    };
-  };
 }
 
 const client = testClient(createTestApp(users)) as UsersTestClient;
+
+const email = "a@b.com";
+const firstName = "John";
+const surname = "Doe";
+const password = "passw0rd";
 
 describe("users routes", () => {
   it("post /users validates the body when creating", async () => {
@@ -54,12 +57,7 @@ describe("users routes", () => {
     expect(error.issues[2].message).toBe(ZOD_ERROR_MESSAGES.REQUIRED);
   });
 
-  const email = "a@b.com";
-  const firstName = "first_name";
-  const surname = "sur_name";
-  const password = "passw0rd";
-
-  it("post /users creates a user with hashed password", async () => {
+  it("post /users creates a user with a hashed password", async () => {
     const response = await client.users.$post({
       json: {
         email,
@@ -144,8 +142,8 @@ describe("users routes", () => {
     expect(user.password).toBeUndefined();
   });
 
-  it("post /api/login authenticates a user and sets a cookie", async () => {
-    const response = await client.api.login.$post({
+  it("post /login authenticates a user and sets a cookie", async () => {
+    const response = await client.login.$post({
       json: {
         email,
         password,
@@ -162,8 +160,8 @@ describe("users routes", () => {
     expect(cookies).toMatch(/authToken=.{20,};/);
   });
 
-  it("post /api/login returns Unauthorized when password is wrong", async () => {
-    const response = await client.api.login.$post({
+  it("post /login returns Unauthorized when password is wrong", async () => {
+    const response = await client.login.$post({
       json: {
         email,
         password: "wrong_password",
@@ -175,11 +173,11 @@ describe("users routes", () => {
     expect(message).toBe(HttpStatusPhrases.UNAUTHORIZED);
   });
 
-  it("post /logout deletes the cookie", async () => {
-    const response = await client.api.logout.$post();
+  it("get /logout deletes the cookie", async () => {
+    const response = await client.logout.$get();
     const cookies = response.headers.get("Set-Cookie");
 
-    expect(response.status).toBe(HttpStatusCodes.OK); // 200
+    expect(response.status).toBe(HttpStatusCodes.NO_CONTENT); // 204
     expect(cookies).toMatch(/authToken=;/); // Auth token is empty
   });
 });

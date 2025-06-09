@@ -35,4 +35,6 @@ dev.db
 *.db-wal
 .env.test
 
-src/index.http
+# Rest Client
+*.http
+*.rest

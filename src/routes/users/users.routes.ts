@@ -6,6 +6,64 @@ import { createErrorSchema, HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
 const tags = ["Users"];
 
+export const login = createRoute({
+  path: "/login",
+  method: "post",
+  tags: ["Auth"],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            email: z.string().email(),
+            password: z.string().min(1),
+          }),
+        },
+      },
+      required: true,
+    },
+  },
+  responses: {
+    [HttpStatusCodes.OK]: { // 200
+      content: {
+        "application/json": {
+          schema: selectUsersSchema,
+        },
+      },
+      description: "Log in the user",
+    },
+    [HttpStatusCodes.UNAUTHORIZED]: { // 401
+      content: {
+        "application/json": {
+          schema: z.object({
+            message: z.string(),
+          }),
+        },
+      },
+      description: "Invalid credentials",
+    },
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: { // 422
+      content: {
+        "application/json": {
+          schema: createErrorSchema(loginSchema),
+        },
+      },
+      description: "The validation error",
+    },
+  },
+});
+
+export const logout = createRoute({
+  path: "/logout",
+  method: "get",
+  tags: ["Auth"],
+  responses: {
+    [HttpStatusCodes.NO_CONTENT]: { // 204
+      description: "Log out the user",
+    },
+  },
+});
+
 export const get = createRoute({
   path: "/users",
   method: "get",
@@ -135,73 +193,8 @@ export const create = createRoute({
   },
 });
 
-export const login = createRoute({
-  path: "/api/login",
-  method: "post",
-  tags: ["Auth"],
-  request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            email: z.string().email(),
-            password: z.string().min(1),
-          }),
-        },
-      },
-      required: true,
-    },
-  },
-  responses: {
-    [HttpStatusCodes.OK]: { // 200
-      content: {
-        "application/json": {
-          schema: selectUsersSchema,
-        },
-      },
-      description: "Log in the user",
-    },
-    [HttpStatusCodes.UNAUTHORIZED]: { // 401
-      content: {
-        "application/json": {
-          schema: z.object({
-            message: z.string(),
-          }),
-        },
-      },
-      description: "Invalid credentials",
-    },
-    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: { // 422
-      content: {
-        "application/json": {
-          schema: createErrorSchema(loginSchema),
-        },
-      },
-      description: "The validation error",
-    },
-  },
-});
-
-export const logout = createRoute({
-  path: "/api/logout",
-  method: "post",
-  tags: ["Auth"],
-  responses: {
-    [HttpStatusCodes.OK]: { // 200
-      content: {
-        "application/json": {
-          schema: z.object({
-            message: z.string(),
-          }),
-        },
-      },
-      description: "Log out the user",
-    },
-  },
-});
-
+export type LoginRoute = typeof login;
+export type LogoutRoute = typeof logout;
 export type GetRoute = typeof get;
 export type GetByEmailRoute = typeof getByEmail;
 export type CreateRoute = typeof create;
-export type LoginRoute = typeof login;
-export type LogoutRoute = typeof logout;

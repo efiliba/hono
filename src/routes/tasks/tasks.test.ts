@@ -1,6 +1,7 @@
 /* eslint-disable ts/ban-ts-comment */
 import { testClient } from "hono/testing";
 import { describe, expect, it } from "vitest";
+import { ZodIssueCode } from "zod";
 
 import env from "@/env";
 import { createTestApp, ZOD_ERROR_MESSAGES } from "@/lib";
@@ -14,8 +15,8 @@ if (env.NODE_ENV !== "test") {
 
 interface TasksTestClient {
   tasks: {
-    $get: () => Promise<Response>;
-    $post: (args: { json: { name: string; done: boolean } }) => Promise<Response>;
+    "$get": () => Promise<Response>;
+    "$post": (args: { json: { name: string; done: boolean } }) => Promise<Response>;
     ":id": {
       $get: (args: { param: { id: number } }) => Promise<Response>;
       $patch: (args: { param: { id: number }; json: { name?: string; done?: boolean } }) => Promise<Response>;
@@ -26,12 +27,8 @@ interface TasksTestClient {
 
 const client = testClient(createTestApp(tasks)) as TasksTestClient;
 
-// const testClientTypeApp = createApp();
-//    ^?
-// const testClientTypeRouter = testClientTypeApp.route("/", router);
-// //    ^?
-// const testClientType = testClient(testClientTypeRouter);
-// //    ^?
+const id = 1;
+const name = "Task todo 😀";
 
 describe("tasks routes", () => {
   it("post /tasks validates the body when creating", async () => {
@@ -48,9 +45,6 @@ describe("tasks routes", () => {
     expect(error.issues[0].path[0]).toBe("name");
     expect(error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.REQUIRED);
   });
-
-  const id = 1;
-  const name = "Learn vitest";
 
   it("post /tasks creates a task", async () => {
     const response = await client.tasks.$post({
@@ -114,21 +108,21 @@ describe("tasks routes", () => {
     expect(task.done).toBe(false);
   });
 
-  // it("patch /tasks/{id} validates the body when updating", async () => {
-  //   const response = await client.tasks[":id"].$patch({
-  //     param: {
-  //       id,
-  //     },
-  //     json: {
-  //       name: "",
-  //     },
-  //   });
-  //   const { error } = await response.json();
+  it("patch /tasks/{id} validates the body when updating", async () => {
+    const response = await client.tasks[":id"].$patch({
+      param: {
+        id,
+      },
+      json: {
+        name: "",
+      },
+    });
+    const { error } = await response.json();
 
-  //   expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY) // 422;
-  //   expect(error.issues[0].path[0]).toBe("name");
-  //   expect(error.issues[0].code).toBe(ZodIssueCode.too_small);
-  // });
+    expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY); // 422;
+    expect(error.issues[0].path[0]).toBe("name");
+    expect(error.issues[0].code).toBe(ZodIssueCode.too_small);
+  });
 
   it("patch /tasks/{id} validates the id param", async () => {
     const response = await client.tasks[":id"].$patch({
@@ -138,7 +132,7 @@ describe("tasks routes", () => {
       },
       json: {},
     });
-  
+
     expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY); // 422;
     if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) { // Added for TS narrowing
       const { error } = await response.json();
@@ -147,20 +141,21 @@ describe("tasks routes", () => {
     }
   });
 
-  // it("patch /tasks/{id} validates empty body", async () => {
-  //   const response = await client.tasks[":id"].$patch({
-  //     param: {
-  //       id,
-  //     },
-  //     json: {},
-  //   });
-  //   expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY) // 422;
-  //   if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
-  //     const json = await response.json();
-  //     expect(json.error.issues[0].code).toBe(ZOD_ERROR_CODES.INVALID_UPDATES);
-  //     expect(json.error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.NO_UPDATES);
-  //   }
-  // });
+  it("patch /tasks/{id} validates empty body", async () => {
+    const response = await client.tasks[":id"].$patch({
+      param: {
+        id,
+      },
+      json: {},
+    });
+
+    expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY); // 422;
+    if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
+      const { error } = await response.json();
+      expect(error.issues[0].code).toBe(ZodIssueCode.invalid_type);
+      expect(error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.NO_UPDATES);
+    }
+  });
 
   it("patch /tasks/{id} updates a single property of a task", async () => {
     const response = await client.tasks[":id"].$patch({
