@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 
 import { LibsqlError } from "@libsql/client";
-import bcrypt from "bcrypt";
+import * as argon2 from "argon2";
 import { deleteCookie, setCookie } from "hono/cookie";
 
 import type { AppRouteHandler } from "@/lib";
@@ -52,7 +52,7 @@ export const create: AppRouteHandler<CreateRoute> = async (context) => {
   const user = context.req.valid("json");
 
   try {
-    const created = await createUser({ ...user, password: await bcrypt.hash(user.password, 10) });
+    const created = await createUser({ ...user, password: await argon2.hash(user.password) });
     return context.json(extractPassword(created), HttpStatusCodes.CREATED);
   }
   catch (error: unknown) {
@@ -67,7 +67,7 @@ export const authenticate: AppRouteHandler<LoginRoute> = async (context) => {
   const { email, password } = context.req.valid("json");
   const user = await getUser(email);
 
-  const authenticated = user && await bcrypt.compare(password, user.password);
+  const authenticated = user && await argon2.verify(user.password, password);
   if (authenticated) {
     const token = await generateToken(email);
     setCookie(context, "authToken", token, cookieOptions);
