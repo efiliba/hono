@@ -11,7 +11,7 @@ export const generateToken = (sub: string) => {
 
 export const cookieOptions = {
   httpOnly: true,
-  secure: env.NODE_ENV === "production", // Only over https (disable for development)
+  secure: env.NODE_ENV === "production", // Only over https (disable for dev)
   sameSite: "strict",
   maxAge: 60 * 60,
   path: "/",

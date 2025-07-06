@@ -1,17 +1,14 @@
-import { createClient } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
 import env from "@/env";
 
 import * as schema from "./schemas";
 
-const client = createClient({
-  url: env.DATABASE_URL,
-  authToken: env.DATABASE_AUTH_TOKEN,
+const client = postgres(env.DATABASE_URL, {
+  max: 1,
+  ssl: "require",
 });
-
-// Enable Write-Ahead Logging mode - improve write performance
-await client.execute("PRAGMA journal_mode=WAL;");
 
 export default drizzle(client, {
   schema,

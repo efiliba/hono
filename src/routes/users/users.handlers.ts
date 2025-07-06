@@ -1,7 +1,8 @@
 import type { Context } from "hono";
+import type { PostgresError } from "postgres";
 
-import { LibsqlError } from "@libsql/client";
 import * as argon2 from "argon2";
+import { DrizzleQueryError } from "drizzle-orm/errors";
 import { deleteCookie, setCookie } from "hono/cookie";
 
 import type { AppRouteHandler } from "@/lib";
@@ -55,8 +56,9 @@ export const create: AppRouteHandler<CreateRoute> = async (context) => {
     const created = await createUser({ ...user, password: await argon2.hash(user.password) });
     return context.json(extractPassword(created), HttpStatusCodes.CREATED);
   }
-  catch (error: unknown) {
-    if (error instanceof LibsqlError && error.code === "SQLITE_CONSTRAINT_PRIMARYKEY") {
+  catch (error) {
+    // PostgresError: duplicate key value violates unique constraint
+    if (error instanceof DrizzleQueryError && (error.cause as PostgresError)?.code === "23505") {
       return createEmailConflictError(context);
     }
     throw error;

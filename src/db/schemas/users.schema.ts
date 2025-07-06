@@ -1,17 +1,12 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
-export const users = sqliteTable("users", {
-  email: text("email")
-    .primaryKey(),
-  firstName: text("first_name")
-    .notNull(),
-  surname: text("surname")
-    .notNull(),
-  password: text("password")
-    .notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .$defaultFn(() => new Date()),
+export const users = pgTable("users", {
+  email: text("email").primaryKey(),
+  firstName: text("first_name").notNull(),
+  surname: text("surname").notNull(),
+  password: text("password").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const selectUsersSchema = createSelectSchema(users)

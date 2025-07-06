@@ -14,7 +14,7 @@ export const createRouter = () =>
 export const createApp = () => {
   const app = createRouter();
 
-  if (["production", "development"].includes(env.NODE_ENV)) {
+  if (["production", "dev"].includes(env.NODE_ENV)) {
     if (env.NODE_ENV === "production") {
       app.use("*", csrf());
     }
