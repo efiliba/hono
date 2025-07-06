@@ -1,19 +1,11 @@
-/* eslint-disable node/no-process-env */
-import { execSync } from "node:child_process";
-import fs from "node:fs";
-import { afterAll, beforeAll } from "vitest";
+import { sql } from "drizzle-orm";
+import { beforeAll } from "vitest";
 
-const testFile = process.env.VITEST_POOL_ID || "default";
-const dbPath = `test-${testFile}.db`;
+import db from "@/db";
+import { tasks, users } from "@/db/schemas";
 
-process.env.DATABASE_URL = `file:${dbPath}`;
-
-beforeAll(() => {
-  execSync("pnpm drizzle-kit push");
-});
-
-afterAll(() => {
-  fs.rmSync(dbPath, { force: true });
-  fs.rmSync(`${dbPath}-wal`, { force: true });
-  fs.rmSync(`${dbPath}-shm`, { force: true });
+beforeAll(async () => {
+  // Clear database before running tests and reset task::id serial sequence
+  await Promise.all([db.delete(tasks), db.delete(users)]);
+  await db.execute(sql`ALTER SEQUENCE tasks_id_seq RESTART`);
 });

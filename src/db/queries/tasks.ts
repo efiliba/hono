@@ -23,6 +23,6 @@ export const updateTask = async (id: number, task: UpdateTask) => {
 };
 
 export const deleteTask = async (id: number) => {
-  const { rowsAffected } = await db.delete(tasks).where(eq(tasks.id, id));
-  return rowsAffected > 0;
+  const { length } = await db.delete(tasks).where(eq(tasks.id, id)).returning();
+  return length > 0;
 };

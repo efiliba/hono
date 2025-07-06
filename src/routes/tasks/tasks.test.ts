@@ -1,9 +1,9 @@
 /* eslint-disable ts/ban-ts-comment */
+import env from "@/env";
 import { testClient } from "hono/testing";
 import { describe, expect, it } from "vitest";
 import { ZodIssueCode } from "zod";
 
-import env from "@/env";
 import { createTestApp, ZOD_ERROR_MESSAGES } from "@/lib";
 import { HttpStatusCodes, HttpStatusPhrases } from "helpers";
 

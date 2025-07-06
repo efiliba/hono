@@ -17,7 +17,7 @@ expand(config({
 
 const EnvSchema = z
   .object({
-    NODE_ENV: z.string().default("dev"),
+    NODE_ENV: z.string().default("development"),
     PORT: z.coerce.number().default(9999),
     LOG_LEVEL: z.enum(["fatal", "error", "warning", "info", "debug", "trace", "silent"]),
     DATABASE_URL: z.string().url(),
