@@ -7,7 +7,7 @@ import * as schema from "./schemas";
 
 const client = postgres(env.DATABASE_URL, {
   max: 1,
-  ssl: "require",
+  ssl: env.NODE_ENV === "production" ? "require" : false,
 });
 
 export default drizzle(client, {

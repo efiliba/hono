@@ -4,6 +4,20 @@
 Based on: https://www.youtube.com/watch?app=desktop&v=sNh9PoM9sUE
 ```
 
+## Setup
+
+1. Install dependencies with `pnpm`
+
+```bash
+pnpm i
+```
+
+2. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+3. Run `./start-database.sh` to start the database.
+
+4. Run `./start-redis.sh` to start the Redis server.
+
 ## Drizzle
 
 ### Create DB
@@ -13,6 +27,11 @@ pnpm drizzle-kit generate
 pnpm drizzle-kit push
 ```
 
+### Start the development server
+```bash
+pnpm dev
+```
+
 ### Open Drizzle Studio
 
 ```bash
@@ -20,6 +39,9 @@ pnpm drizzle-kit studio
 ```
 
 https://local.drizzle.studio
+
+## Scalar
+http://localhost:9999/reference
 
 #### Tasks API
 

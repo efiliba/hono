@@ -19,7 +19,7 @@ export const createApp = () => {
       app.use("*", csrf());
     }
 
-    app.use("/tasks/*", jwt({ secret: env.JWT_SECRET, cookie: "authToken" }));
+    // app.use("/tasks/*", jwt({ secret: env.JWT_SECRET, cookie: "authToken" }));
   }
 
   app.use(serveEmojiFavicon("😀"));

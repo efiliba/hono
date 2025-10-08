@@ -1,9 +1,8 @@
 /* eslint-disable ts/ban-ts-comment */
-import env from "@/env";
 import { testClient } from "hono/testing";
 import { describe, expect, it } from "vitest";
-import { ZodIssueCode } from "zod";
 
+import env from "@/env";
 import { createTestApp, ZOD_ERROR_MESSAGES } from "@/lib";
 import { HttpStatusCodes, HttpStatusPhrases } from "helpers";
 
@@ -121,7 +120,7 @@ describe("tasks routes", () => {
 
     expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY); // 422;
     expect(error.issues[0].path[0]).toBe("name");
-    expect(error.issues[0].code).toBe(ZodIssueCode.too_small);
+    expect(error.issues[0].code).toBe("too_small");
   });
 
   it("patch /tasks/{id} validates the id param", async () => {
@@ -152,7 +151,7 @@ describe("tasks routes", () => {
     expect(response.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY); // 422;
     if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
       const { error } = await response.json();
-      expect(error.issues[0].code).toBe(ZodIssueCode.invalid_type);
+      expect(error.issues[0].code).toBe("invalid_type");
       expect(error.issues[0].message).toBe(ZOD_ERROR_MESSAGES.NO_UPDATES);
     }
   });

@@ -22,7 +22,8 @@ const EnvSchema = z
     LOG_LEVEL: z.enum(["fatal", "error", "warning", "info", "debug", "trace", "silent"]),
     DATABASE_URL: z.string().url(),
     JWT_SECRET: z.string(),
-  });
+  //   DATABASE_AUTH_TOKEN: z.string().optional(),
+  // })
   // .superRefine((input, contex) => {
   //   if (input.NODE_ENV === "production" && !input.DATABASE_AUTH_TOKEN) {
   //     contex.addIssue({
@@ -33,7 +34,7 @@ const EnvSchema = z
   //       message: "Must be set when NODE_ENV is 'production'",
   //     });
   //   }
-  // });
+  });
 
 export type env = z.infer<typeof EnvSchema>;
 
@@ -41,7 +42,9 @@ const { data, error } = EnvSchema.safeParse(process.env);
 
 if (error) {
   console.error("❌ Invalid env:");
-  console.error(JSON.stringify(error.flatten().fieldErrors, null, 2));
+  // Zod v4: use treeifyError instead of flatten/format
+  // console.error(JSON.stringify(error.flatten().fieldErrors, null, 2));
+  console.error(JSON.stringify(z.treeifyError(error), null, 2));
   process.exit(1);
 }
 

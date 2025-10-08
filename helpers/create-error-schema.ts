@@ -1,9 +1,10 @@
 import { z } from "@hono/zod-openapi";
 
-export type ZodSchema = z.ZodUnion<[z.ZodTypeAny]> | z.AnyZodObject | z.ZodArray<z.AnyZodObject> | z.ZodEffects<any, any, any>;
+export type ZodSchema = z.ZodTypeAny;
 
 export function createErrorSchema<T extends ZodSchema>(schema: T) {
-  const { error } = schema.safeParse(schema._def.typeName === z.ZodFirstPartyTypeKind.ZodArray ? [] : {});
+  // Pass undefined to reliably trigger a validation error across all schema types
+  const { error } = schema.safeParse(undefined);
 
   return z.object({
     success: z.boolean().openapi({ example: false }),
