@@ -6,11 +6,15 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "generate": "drizzle-kit generate",
-    "push": "drizzle-kit push",
-    "studio": "drizzle-kit studio",
+    "db:start": "bash ./start-database.sh",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
     "lint": "eslint .",
-    "test": "LOG_LEVEL=silent vitest"
+    "test": "LOG_LEVEL=silent vitest",
+    "db:test:start": "bash ./start-test-database.sh",
+    "db:test:push": "bash -lc 'set -a; source .env.test; NODE_ENV=test drizzle-kit push'",
+    "db:test:studio": "bash -lc 'set -a; source .env.test; NODE_ENV=test drizzle-kit studio'"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.5",

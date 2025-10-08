@@ -43,6 +43,37 @@ https://local.drizzle.studio
 ## Scalar
 http://localhost:9999/reference
 
+### Setup Test Database
+1. Run `./start-test-database.sh` to create/start the test database.
+```bash
+pnpm db:test:start
+```
+
+2. The schema files should already exist or use: 
+```bash
+pnpm db:generate
+```
+
+3. Apply the schema changes
+```bash
+pnpm db:test:push
+```
+
+4. Check that the tables have been created
+```bash
+docker exec -it virl-test-postgres psql -U postgres -d virl-test -c '\dt'
+```
+
+5. Connect to the test database using drizzle-kit studio
+```bash
+pnpm db:test:studio
+```
+
+6. Run the tests
+```bash
+pnpm test
+```
+
 #### Tasks API
 
 [tasks.index.ts](src/routes/tasks/tasks.index.ts)\
