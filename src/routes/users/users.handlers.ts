@@ -55,8 +55,7 @@ export const create: AppRouteHandler<CreateRoute> = async (context) => {
   try {
     const created = await createUser({ ...user, password: await argon2.hash(user.password) });
     return context.json(extractPassword(created), HttpStatusCodes.CREATED);
-  }
-  catch (error) {
+  } catch (error) {
     // PostgresError: duplicate key value violates unique constraint
     if (error instanceof DrizzleQueryError && (error.cause as PostgresError)?.code === "23505") {
       return createEmailConflictError(context);

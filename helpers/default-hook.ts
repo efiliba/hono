@@ -7,7 +7,10 @@ export const defaultHook: Hook<any, any, any, any> = (result, context) => {
     return context.json(
       {
         success: result.success,
-        error: result.error,
+        error: {
+          issues: result.error.issues,
+          name: result.error.name,
+        },
       },
       UNPROCESSABLE_ENTITY,
     );

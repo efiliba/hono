@@ -12,6 +12,7 @@ export default antfu({
   ignores: ["**/migrations/*", "README.md"],
 }, {
   rules: {
+    "@stylistic/brace-style": ["error", "1tbs", { allowSingleLine: true }],
     "no-console": ["warn"],
     "antfu/no-top-level-await": ["off"],
     "antfu/top-level-function": ["off"],

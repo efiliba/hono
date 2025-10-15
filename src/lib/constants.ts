@@ -3,9 +3,9 @@ import { z } from "@hono/zod-openapi";
 import { HttpStatusPhrases } from "helpers";
 
 export const ZOD_ERROR_MESSAGES = {
-  REQUIRED: "Required",
-  EXPECTED_NUMBER: "Expected number, received nan",
-  INVALID_EMAIL: "Invalid email",
+  REQUIRED: "Invalid input: expected string, received undefined",
+  EXPECTED_NUMBER: "Invalid input: expected number, received NaN",
+  INVALID_EMAIL: "Invalid email address",
   NO_UPDATES: "No fields provided to update",
   DUPLICATE_EMAIL: "Email already exists",
 };
