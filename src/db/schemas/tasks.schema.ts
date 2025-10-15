@@ -29,7 +29,7 @@ export const patchTaskSchema = z.object({
 }).superRefine((input, contex) => {
   if (Object.keys(input).length === 0) {
     contex.addIssue({
-      code: z.ZodIssueCode.invalid_type,
+      code: "invalid_type",
       expected: "object",
       received: "undefined",
       path: ["name", "done"],

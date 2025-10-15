@@ -1,3 +1,4 @@
+import { z } from "@hono/zod-openapi";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
@@ -13,7 +14,7 @@ export const selectUsersSchema = createSelectSchema(users)
   .omit({ password: true });
 
 export const insertUserSchema = createInsertSchema(users, {
-  email: schema => schema.email(),
+  email: () => z.email(),
   firstName: schema => schema.min(1).max(50),
   surname: schema => schema.min(1).max(50),
   password: schema => schema.min(1).max(50),

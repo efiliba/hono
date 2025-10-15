@@ -15,7 +15,7 @@ export const login = createRoute({
       content: {
         "application/json": {
           schema: z.object({
-            email: z.string().email(),
+            email: z.email(),
             password: z.string().min(1),
           }),
         },
@@ -81,7 +81,7 @@ export const get = createRoute({
 });
 
 const emailParamsSchema = z.object({
-  email: z.string().email().openapi({
+  email: z.email().openapi({
     param: {
       name: "email",
       in: "path",
