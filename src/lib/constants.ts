@@ -8,7 +8,10 @@ export const ZOD_ERROR_MESSAGES = {
   INVALID_EMAIL: "Invalid email address",
   NO_UPDATES: "No fields provided to update",
   DUPLICATE_EMAIL: "Email already exists",
+  DUPLICATE_PHONE: "Phone number already exists",
 };
+
+export type ZOD_ERROR_MESSAGE_TYPE = (typeof ZOD_ERROR_MESSAGES)[keyof typeof ZOD_ERROR_MESSAGES];
 
 export const ZOD_ERROR_CODES = {
   INVALID_UPDATES: "invalid_updates",

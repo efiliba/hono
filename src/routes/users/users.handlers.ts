@@ -5,7 +5,7 @@ import * as argon2 from "argon2";
 import { DrizzleQueryError } from "drizzle-orm/errors";
 import { deleteCookie, setCookie } from "hono/cookie";
 
-import type { AppRouteHandler } from "@/lib";
+import type { AppRouteHandler, ZOD_ERROR_MESSAGE_TYPE } from "@/lib";
 
 import { createUser, getUser, getUsers } from "@/db/queries/users";
 import { cookieOptions, generateToken, ZOD_ERROR_MESSAGES } from "@/lib";
@@ -34,15 +34,15 @@ export const getByEmail: AppRouteHandler<GetByEmailRoute> = async (context) => {
   return context.json(extractPassword(user), HttpStatusCodes.OK);
 };
 
-const createEmailConflictError = (context: Context) =>
+const createConflictError = (context: Context, path: string, message: ZOD_ERROR_MESSAGE_TYPE) =>
   context.json({
     success: false,
     error: {
       issues: [
         {
           code: HttpStatusPhrases.CONFLICT,
-          path: ["email"],
-          message: ZOD_ERROR_MESSAGES.DUPLICATE_EMAIL,
+          path: [path],
+          message,
         },
       ],
       name: "ZodError",
@@ -57,8 +57,16 @@ export const create: AppRouteHandler<CreateRoute> = async (context) => {
     return context.json(extractPassword(created), HttpStatusCodes.CREATED);
   } catch (error) {
     // PostgresError: duplicate key value violates unique constraint
-    if (error instanceof DrizzleQueryError && (error.cause as PostgresError)?.code === "23505") {
-      return createEmailConflictError(context);
+    if (error instanceof DrizzleQueryError) {
+      const pgError = error.cause as PostgresError | undefined;
+      if (pgError?.code === "23505") {
+        switch (pgError?.constraint_name) {
+          case "users_email_unique":
+            return createConflictError(context, "email", ZOD_ERROR_MESSAGES.DUPLICATE_EMAIL);
+          case "users_phone_unique":
+            return createConflictError(context, "phone", ZOD_ERROR_MESSAGES.DUPLICATE_PHONE);
+        }
+      }
     }
     throw error;
   }

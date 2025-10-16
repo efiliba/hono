@@ -1,2 +1,2 @@
-export * from "./tasks.schema";
-export * from "./users.schema";
+export * from "./tasks";
+export * from "./users";
