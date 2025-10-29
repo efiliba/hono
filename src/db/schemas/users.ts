@@ -1,6 +1,11 @@
 import { z } from "@hono/zod-openapi";
-import { boolean, date, integer, pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { boolean, date, integer, pgEnum, pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+
+import { userEvents } from "./userEvents";
+
+export const sexEnum = pgEnum("sex", ["male", "female", "other"]);
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -9,7 +14,7 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   phone: varchar("phone", { length: 255 }).notNull().unique(),
   dob: date("dob", { mode: "string" }),
-  sex: varchar("sex", { length: 255 }),
+  sex: sexEnum("sex"),
   height: integer("height"),
   weight: integer("weight"),
   elo: integer("elo").notNull().default(1000),
@@ -22,6 +27,10 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 });
 
+export const userRelations = relations(users, ({ many }) => ({
+  userEvents: many(userEvents),
+}));
+
 export const selectUsersSchema = createSelectSchema(users)
   .omit({ password: true });
 
@@ -31,7 +40,7 @@ export const insertUserSchema = createInsertSchema(users, {
   email: () => z.email(),
   password: schema => schema.min(1).max(50),
 })
-  .omit({ createdAt: true, updatedAt: true });
+  .omit({ id: true, createdAt: true, updatedAt: true });
 
 export const loginSchema = createSelectSchema(users)
   .omit({ firstName: true, surname: true, createdAt: true });

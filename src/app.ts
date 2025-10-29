@@ -1,5 +1,5 @@
 import { configureOpenAPI, createApp } from "@/lib";
-import { index, tasks, users } from "@/routes";
+import { events, index, tasks, userEvents, users } from "@/routes";
 
 const app = createApp();
 
@@ -9,7 +9,7 @@ const app = createApp();
 
 // export type AppType = typeof _app;
 
-const routes = [index, tasks, users] as const;
+const routes = [index, tasks, users, events, userEvents] as const;
 routes.forEach(route => app.route("/", route));
 
 configureOpenAPI(app);

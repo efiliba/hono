@@ -5,6 +5,7 @@ import { HttpStatusPhrases } from "helpers";
 export const ZOD_ERROR_MESSAGES = {
   REQUIRED: "Invalid input: expected string, received undefined",
   EXPECTED_NUMBER: "Invalid input: expected number, received NaN",
+  EXPECTED_NUMBER_BUT_UNDEFINED: "Invalid input: expected number, received undefined",
   INVALID_EMAIL: "Invalid email address",
   NO_UPDATES: "No fields provided to update",
   DUPLICATE_EMAIL: "Email already exists",
