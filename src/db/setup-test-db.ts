@@ -8,8 +8,7 @@ import { Pool } from "pg";
 
 import * as schema from "./schemas";
 
-const adminDbUrl = process.env.ADMIN_DATABASE_URL;
-const testDatabaseUrl = process.env.TEST_DATABASE_URL;
+const testDbBaseUrl = process.env.TEST_DATABASE_BASE_URL;
 
 export interface TestDbContext {
   pool: Pool;
@@ -18,14 +17,12 @@ export interface TestDbContext {
 }
 
 export const createTestDb = async (): Promise<TestDbContext> => {
-  // const testDbName = `test_db_${randomUUID().replace(/-/g, "")}`;
-  const testDbName = `test_db`;
+  const testDbName = `test_db_${randomUUID().replace(/-/g, "")}`;
+  const testDbUrl = `${testDbBaseUrl}/${testDbName}`;
 
-  const testDbUrl = `${testDatabaseUrl}/${testDbName}`;
-
-  // const adminPool = new Pool({ connectionString: `${testDatabaseUrl}/postgres` });
-  // await adminPool.query(`CREATE DATABASE ${testDbName}`);
-  // await adminPool.end();
+  const adminPool = new Pool({ connectionString: `${testDbBaseUrl}/postgres` });
+  await adminPool.query(`CREATE DATABASE ${testDbName}`);
+  await adminPool.end();
 
   const pool = new Pool({
     connectionString: testDbUrl,
@@ -42,7 +39,7 @@ export const createTestDb = async (): Promise<TestDbContext> => {
 export const destroyTestDb = async ({ pool, testDbName }: TestDbContext) => {
   await pool.end();
 
-  const adminPool = new Pool({ connectionString: adminDbUrl });
+  const adminPool = new Pool({ connectionString: `${testDbBaseUrl}/postgres` });
   await adminPool.query(`
     SELECT pg_terminate_backend(pid)
     FROM pg_stat_activity

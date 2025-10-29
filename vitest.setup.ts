@@ -1,9 +1,8 @@
-import { sql } from "drizzle-orm";
-import { afterEach, beforeEach, vi } from "vitest";
+import { afterAll, beforeAll, vi } from "vitest";
 
 import type { TestDbContext } from "@/db/setup-test-db";
 
-import { createTestDb } from "@/db/setup-test-db";
+import { createTestDb, destroyTestDb } from "@/db/setup-test-db";
 
 // Hoisted state to inject the per-test db instance into the '@/db' module mock
 const hoisted = vi.hoisted(() => {
@@ -43,15 +42,11 @@ vi.mock("@/db", () => ({
 
 let ctx: TestDbContext;
 
-beforeEach(async () => {
+beforeAll(async () => {
   ctx = await createTestDb();
   hoisted.setDb(ctx.db);
-
-  // Ensure a clean state when reusing a persistent test database
-  await ctx.db.execute(sql`TRUNCATE TABLE user_events, events, tasks, users RESTART IDENTITY CASCADE`);
 });
 
-afterEach(async () => {
-  // Uncomment to drop and recreate per test; for now just close connections
-  // await destroyTestDb(ctx);
+afterAll(async () => {
+  await destroyTestDb(ctx);
 });

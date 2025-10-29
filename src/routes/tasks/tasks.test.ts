@@ -18,7 +18,7 @@ const client = testClient<AppType>(createTestApp(tasks));
 const id = 1;
 const name = "Task todo 😀";
 
-describe.todo("tasks routes", () => {
+describe("tasks routes", () => {
   it("post /tasks validates the body when creating", async () => {
     const response = await client.tasks.$post({
       // @ts-expect-error missing required fields

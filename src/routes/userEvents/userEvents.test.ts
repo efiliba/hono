@@ -21,7 +21,7 @@ const eventClient = testClient<AppType>(createTestApp(events));
 
 const today = new Date().toISOString().slice(0, 10);
 
-describe.todo("userEvents routes", () => {
+describe("userEvents routes", () => {
   it("post /user-events validates required fields when creating", async () => {
     const response = await client["user-events"].$post({
       // @ts-expect-error missing required fields

@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import type { PostgresError } from "postgres";
+import type { DatabaseError } from "pg";
 
 import * as argon2 from "argon2";
 import { DrizzleQueryError } from "drizzle-orm/errors";
@@ -58,9 +58,9 @@ export const create: AppRouteHandler<CreateRoute> = async (context) => {
   } catch (error) {
     // PostgresError: duplicate key value violates unique constraint
     if (error instanceof DrizzleQueryError) {
-      const pgError = error.cause as PostgresError | undefined;
+      const pgError = error.cause as DatabaseError | undefined;
       if (pgError?.code === "23505") {
-        switch (pgError?.constraint_name) {
+        switch (pgError?.constraint) {
           case "users_email_unique":
             return createConflictError(context, "email", ZOD_ERROR_MESSAGES.DUPLICATE_EMAIL);
           case "users_phone_unique":

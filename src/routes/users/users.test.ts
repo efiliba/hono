@@ -22,31 +22,7 @@ const phone = "0412345678";
 const password = "passw0rd";
 const today = new Date().toISOString().slice(0, 10);
 
-describe("smoke test", () => {
-  it("post /users creates a user with the minimum required fields", async () => {
-    const response = await client.users.$post({
-      json: {
-        firstName,
-        surname,
-        email,
-        phone,
-        password,
-      },
-    });
-
-    // if (response.status !== HttpStatusCodes.CREATED) { // 201
-    //   console.log("-------> response", response);
-    //   throw new Error("Expected user to be created");
-    // }
-
-    const user = await response.json();
-    console.log("-------> user", JSON.stringify(user, null, 2));
-
-    expect(Object.keys(user).length).toBe(16);
-  });
-});
-
-describe.todo("users routes", () => {
+describe("users routes", () => {
   it("post /users validates required fields when creating", async () => {
     const response = await client.users.$post({
       // @ts-expect-error missing required fields

@@ -21,7 +21,7 @@ const suburb = "Anytown";
 const postcode = "1234";
 const today = new Date().toISOString().slice(0, 10);
 
-describe.todo("events routes", () => {
+describe("events routes", () => {
   it("post /events validates required fields when creating", async () => {
     const response = await client.events.$post({
       // @ts-expect-error missing required fields
