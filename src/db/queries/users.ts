@@ -1,4 +1,4 @@
-import db from "@/db";
+import { db } from "@/db";
 import { users } from "@/db/schemas";
 
 import type { InsertUser } from "../types";

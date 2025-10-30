@@ -68,6 +68,8 @@ export const create: AppRouteHandler<CreateRoute> = async (context) => {
         }
       }
     }
+
+    console.error("Unexpected error creating user:", error);
     throw error;
   }
 };

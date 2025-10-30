@@ -1,4 +1,4 @@
-import db from "@/db";
+import { db } from "@/db";
 import { userEvents } from "@/db/schemas";
 
 import type { InsertUserEvent } from "../types";

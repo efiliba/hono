@@ -37,7 +37,7 @@ const hoisted = vi.hoisted(() => {
 
 vi.mock("@/db", () => ({
   __esModule: true,
-  default: hoisted.dbProxy,
+  db: hoisted.dbProxy,
 }));
 
 let ctx: TestDbContext;

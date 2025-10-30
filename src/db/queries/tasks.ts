@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 
-import db from "@/db";
+import { db } from "@/db";
 import { tasks } from "@/db/schemas";
 
 import type { InsertTask, UpdateTask } from "../types";

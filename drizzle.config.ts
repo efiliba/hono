@@ -10,4 +10,5 @@ export default defineConfig({
     url: env.DATABASE_URL,
     ssl: env.NODE_ENV === "production",
   },
+  casing: "snake_case",
 });

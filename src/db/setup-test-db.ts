@@ -9,8 +9,6 @@ import { Pool } from "pg";
 
 import * as schema from "./schemas";
 
-const testDbBaseUrl = env.DATABASE_URL;
-
 // View all test databases
 // psql "postgres://username:password@localhost:5432/postgres" \
 // -c "SELECT datname FROM pg_database WHERE datname LIKE 'test_db%' ORDER BY datname;"
@@ -22,6 +20,10 @@ const testDbBaseUrl = env.DATABASE_URL;
 //   psql "$ADMIN_URL" -c "DROP DATABASE IF EXISTS \"$db\";"
 // done
 
+// Check the contents of the test database
+// psql "postgres://username:password@localhost:5432/test_db_..." \
+// -c "SELECT * FROM users"
+
 export interface TestDbContext {
   pool: Pool;
   db: NodePgDatabase<typeof schema>;
@@ -30,16 +32,15 @@ export interface TestDbContext {
 
 export const createTestDb = async (): Promise<TestDbContext> => {
   const testDbName = `test_db_${randomUUID().replace(/-/g, "")}`;
-  const testDbUrl = `${testDbBaseUrl}/${testDbName}`;
 
-  const adminPool = new Pool({ connectionString: `${testDbBaseUrl}/postgres` });
+  const adminPool = new Pool({ connectionString: `${env.DATABASE_URL}/postgres` });
   await adminPool.query(`CREATE DATABASE ${testDbName}`);
   await adminPool.end();
 
   const pool = new Pool({
-    connectionString: testDbUrl,
+    connectionString: `${env.DATABASE_URL}/${testDbName}`,
     max: 10,
-    idleTimeoutMillis: 30000,
+    idleTimeoutMillis: 30_000,
   });
   const db = drizzle(pool, { schema, casing: "snake_case" });
 
@@ -51,7 +52,7 @@ export const createTestDb = async (): Promise<TestDbContext> => {
 export const destroyTestDb = async ({ pool, testDbName }: TestDbContext) => {
   await pool.end();
 
-  const adminPool = new Pool({ connectionString: `${testDbBaseUrl}/postgres` });
+  const adminPool = new Pool({ connectionString: `${env.DATABASE_URL}/postgres` });
   await adminPool.query(`
     SELECT pg_terminate_backend(pid)
     FROM pg_stat_activity

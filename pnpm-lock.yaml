@@ -44,9 +44,6 @@ importers:
       pino:
         specifier: ^10.0.0
         version: 10.0.0
-      postgres:
-        specifier: ^3.4.7
-        version: 3.4.7
       zod:
         specifier: ^4.1.12
         version: 4.1.12
@@ -4900,7 +4897,8 @@ snapshots:
     dependencies:
       xtend: 4.0.2
 
-  postgres@3.4.7: {}
+  postgres@3.4.7:
+    optional: true
 
   prelude-ls@1.2.1: {}
 

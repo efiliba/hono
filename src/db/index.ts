@@ -1,15 +1,14 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
 import env from "@/env";
 
 import * as schema from "./schemas";
 
-const client = postgres(env.DATABASE_URL, {
-  max: 1,
-  ssl: env.NODE_ENV === "production" ? "require" : false,
+export const pool = new Pool({
+  connectionString: env.DATABASE_URL,
+  max: 10,
+  idleTimeoutMillis: 30_000,
 });
 
-export default drizzle(client, {
-  schema,
-});
+export const db = drizzle(pool, { schema, casing: "snake_case" });
