@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { csrf } from "hono/csrf";
-import { jwt } from "hono/jwt";
+// import { jwt } from "hono/jwt";
 
 import env from "@/env";
 import { pinoLogger } from "@/middlewares/pino-logger";
