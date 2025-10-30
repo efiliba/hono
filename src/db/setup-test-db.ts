@@ -9,21 +9,6 @@ import { Pool } from "pg";
 
 import * as schema from "./schemas";
 
-// View all test databases
-// psql "postgres://username:password@localhost:5432/postgres" \
-// -c "SELECT datname FROM pg_database WHERE datname LIKE 'test_db%' ORDER BY datname;"
-
-// Drop all test databases
-// ADMIN_URL="postgres://username:password@localhost:5432/postgres"
-// for db in $(psql "$ADMIN_URL" -t -A -c "SELECT datname FROM pg_database WHERE datname LIKE 'test_db%'"); do
-//   psql "$ADMIN_URL" -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$db' AND pid <> pg_backend_pid();"
-//   psql "$ADMIN_URL" -c "DROP DATABASE IF EXISTS \"$db\";"
-// done
-
-// Check the contents of the test database
-// psql "postgres://username:password@localhost:5432/test_db_..." \
-// -c "SELECT * FROM users"
-
 export interface TestDbContext {
   pool: Pool;
   db: NodePgDatabase<typeof schema>;

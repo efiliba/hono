@@ -11,10 +11,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "lint": "eslint .",
-    "test": "LOG_LEVEL=silent vitest",
-    "db:test:start": "bash ./start-test-database.sh",
-    "db:test:push": "bash -lc 'set -a; source .env.test; NODE_ENV=test drizzle-kit push'",
-    "db:test:studio": "bash -lc 'set -a; source .env.test; NODE_ENV=test drizzle-kit studio'"
+    "test": "LOG_LEVEL=silent vitest"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.5",
@@ -24,6 +21,7 @@
     "dotenv": "^17.2.3",
     "dotenv-expand": "^12.0.3",
     "drizzle-orm": "^0.44.6",
+    "drizzle-seed": "^0.3.1",
     "drizzle-zod": "^0.8.3",
     "hono": "^4.9.10",
     "hono-pino": "^0.10.3",

@@ -44,34 +44,37 @@ https://local.drizzle.studio
 http://localhost:9999/reference
 
 ### Setup Test Database
-1. Run `./start-test-database.sh` to create/start the test database.
-```bash
-pnpm db:test:start
-```
 
-2. The schema files should already exist or use: 
+1. The schema files should already exist or use: 
 ```bash
 pnpm db:generate
+pnpm db:push
 ```
 
-3. Apply the schema changes
-```bash
-pnpm db:test:push
-```
-
-4. Check that the tables have been created
-```bash
-docker exec -it virl-test-postgres psql -U postgres -d virl-test -c '\dt'
-```
-
-5. Connect to the test database using drizzle-kit studio
-```bash
-pnpm db:test:studio
-```
-
-6. Run the tests
+2. Run the tests
 ```bash
 pnpm test
+```
+
+3. View the test databases (deleted by vitest.setup.ts)
+```bash
+psql "postgres://username:password@localhost:5432/postgres" \
+  -c "SELECT datname FROM pg_database WHERE datname LIKE 'test_db%' ORDER BY datname;"
+```
+
+4. Drop all test databases
+```bash
+ADMIN_URL="postgres://username:password@localhost:5432/postgres"
+for db in $(psql "$ADMIN_URL" -t -A -c "SELECT datname FROM pg_database WHERE datname LIKE 'test_db%'"); do
+  psql "$ADMIN_URL" -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$db' AND pid <> pg_backend_pid();"
+  psql "$ADMIN_URL" -c "DROP DATABASE IF EXISTS \"$db\";"
+done
+```
+
+5. Check the contents of the test database
+```bash
+psql "postgres://username:password@localhost:5432/test_db_..." \
+  -c "SELECT * FROM users"
 ```
 
 #### Tasks API
