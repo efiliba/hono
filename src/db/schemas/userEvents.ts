@@ -13,7 +13,7 @@ export const userEvents = pgTable("user_events", {
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 }, table => [
-  primaryKey({ columns: [table.userId, table.eventId] }),
+  primaryKey({ name: "id", columns: [table.userId, table.eventId] }),
 ]);
 
 export const userEventRelations = relations(userEvents, ({ one }) => ({
